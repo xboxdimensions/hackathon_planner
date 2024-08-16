@@ -305,6 +305,20 @@ document.getElementById("courseSelect").innerHTML += `<option value="${courseCod
 document.getElementById('courseSelect').addEventListener('change', function() {
     const courseCode = this.value;
     console.log(courseCode);
+
+        const response = fetch('/api', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({courseCode})
+        })
+        .then(response => response.json())
+        .then(data => { })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+
 });
 
 </script>
