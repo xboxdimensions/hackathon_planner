@@ -2,7 +2,7 @@
 
 Responsible for connecting the differrent modules/sub components"""
 
-from timetable import Timetable
+from timetable import Plan
 
 
 USER_OPTIONS = {"ProgramLength" : 3, # years
@@ -29,8 +29,9 @@ def generate_options(UserOptions={}, ProgramOptions={}):
 				 	 [SEM2]]
 				}
 	"""
-
-	return Timetable()
+	# generate timetable
+	
+	return Plan()
 
 
 if __name__ == "__main__":
