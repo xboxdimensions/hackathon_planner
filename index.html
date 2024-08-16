@@ -62,11 +62,11 @@
         <br>
         <label for="Course">Course:</label>
         <select id="Course">
-            <option value="BEME">Bachelor of Engineering (Honours) and Master of Engineering</option>
+            <option value="BHealthSportPEHons">Bachelor of Health, Sport and Physical Education (Honours)</option>
             <option value="BEHons">Bachelor of Engineering (Honours)</option>
-            <option value="Bcompsc">Bachelor of Computer Science</option>
-            <option value="Becom">Bachelor of Economics</option>
-            <option value="BAFEC">Bachelor of Advanced Finance and Economics (Honours)</option>
+            <option value="BHealthSc">Bachelor of Health Sciences</option>
+            <option value="BVetScHons">Bachelor of Veterinary Science (Honours)</option>
+            <option value="BAAdvBusHons">Bachelor of Advanced Business (Honours)</option>
         </select>
     </div>
     <div class="courses">
@@ -111,10 +111,9 @@
         <div class="semester" id="semester1-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
         <div class="semester" id="semester2-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
         <div class="semester" id="semester3-5" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
-        
+        <button id="add-year-button">Add Year</button> 
     </div>
 </div>
-
 <script>
     document.querySelectorAll('.course').forEach(course => {
         course.addEventListener('dragstart', drag);
@@ -139,6 +138,16 @@
     function drag(event) {
         event.dataTransfer.setData('text', event.target.id);
     }
+    document.getElementById('starting-year').addEventListener('change', function() {
+        const startingYear = this.value - 1;
+        const semesterContainers = document.querySelectorAll('.semesters h2');
+
+        semesterContainers.forEach((container, index) => {
+            const year = parseInt(startingYear) + index;
+            container.textContent = year;
+        });
+        
+    });
 </script>
 
 </body>
