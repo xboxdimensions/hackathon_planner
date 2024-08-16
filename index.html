@@ -21,6 +21,7 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
         }
         .courses h2, .semesters h2 {
             margin-bottom: 20px;
@@ -34,6 +35,13 @@
             border-radius: 4px;
             cursor: pointer;
             text-align: center;
+        }
+        .course:hover,
+        .semester:hover {
+            transform: scale(1.05);
+        }
+        .allcourses {
+            border: 2px dashed #ccc;
         }
         .semester {
             min-height: 50px;
@@ -71,6 +79,7 @@
     </div>
     <div class="courses">
         <h2>Available Courses</h2>
+        <div class="semester" id="cou" ondrop="drop(event)" ondragover="allowDrop(event)">
         <div class="course" draggable="true" id="course1">ENGG1300: Introduction to Electrical Systems</div>
         <div class="course" draggable="true" id="course2">INFS1200: Introduction to Information Systems</div>
         <div class="course" draggable="true" id="course3">MATH1061: Discrete Mathematics</div>
@@ -89,6 +98,7 @@
         <div class="course" draggable="true" id="course16">ENGG4900: Professional Practice and the Business Environment</div>
         <div class="course" draggable="true" id="course17">ENGG7290: Engineering Placement Semester</div>
         <div class="course" draggable="true" id="course18">ENGG7701: Engineering Grand Challenges</div>
+    </div>
     </div>
     <div class="semesters">
         <h2>2024</h2>
@@ -111,7 +121,6 @@
         <div class="semester" id="semester1-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
         <div class="semester" id="semester2-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
         <div class="semester" id="semester3-5" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
-        <button id="add-year-button">Add Year</button> 
     </div>
 </div>
 <script>
@@ -123,18 +132,30 @@
         event.preventDefault();
         event.currentTarget.classList.add('over');
     }
-
+    
     function drop(event) {
         event.preventDefault();
         const data = event.dataTransfer.getData('text');
         const course = document.getElementById(data);
+        const semester = event.currentTarget;
 
-        if (!event.currentTarget.querySelector(`#${data}`)) {
-            event.currentTarget.appendChild(course);
+        if (semester.id == "cou"){
+            if (!semester.querySelector(`#${data}`)) {
+                semester.appendChild(course);
+            }
+        } else if (semester.id === 'semester1-1' && semester.querySelectorAll('.course').length >= 4) {
+            alert('You cannot have more than 4 courses in the first semester of the first year.');
+        } else if (semester.id.includes('semester3') && semester.querySelectorAll('.course').length >= 3) {
+            alert('You cannot have more than 3 courses in the summer semester.');
+        } else if (semester.querySelectorAll('.course').length >= 5) {
+            alert('You cannot have more than 5 courses in a semester.');
+        } else {
+            if (!semester.querySelector(`#${data}`)) {
+                semester.appendChild(course);
+            }
         }
-        event.currentTarget.classList.remove('over');
+        semester.classList.remove('over');
     }
-
     function drag(event) {
         event.dataTransfer.setData('text', event.target.id);
     }
