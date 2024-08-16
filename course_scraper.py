@@ -42,8 +42,27 @@ def course_finder(program_code: int) -> tuple[dict, dict]:
     return (courses, plans)
 
 
-def courseData(courses: dict = {}) -> dict:
+def plan_finder(planCode: str) -> dict[str]:
+    courses = {}
+    url = f"https://my.uq.edu.au/programs-courses/requirements/plan/{
+        planCode}/2024"
+    response = requests.get(url, headers=headers)
+    text = response.text
+    text = str(text)
+    codes = text.split('"code":')[1:]
+    for t in codes:
+        if t[5:9].isdigit():
+            index = t.find('fromTerm')-3
+            # end = t.find('",', index)
+            i = t.find(',"name":"')+9
+            courses[t[1:9]] = {}
+            courses[t[1:9]]["Name"] = t[i:index].replace("\\", "")  # :end]
+    return courses
+
+
+def courseData(courses: dict) -> dict:
     for courseCode in courses.keys():
+        print("Now on " + courseCode)
         url = f"https://my.uq.edu.au/programs-courses/course.html?course_code={
             courseCode}"
         response = requests.get(url, headers=headers)
