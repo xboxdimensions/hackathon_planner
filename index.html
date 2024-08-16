@@ -36,10 +36,23 @@
             cursor: pointer;
             text-align: center;
         }
-        .course:hover,
-        .semester:hover {
-            transform: scale(1.05);
+        @keyframes wiggle {
+        0% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        50% { transform: translateX(5px); }
+        75% { transform: translateX(-5px); }
+        100% { transform: translateX(0); }
         }
+
+        .course, .semester {
+            /* ... existing styles ... */
+            transition: transform 0.3s ease;
+        }
+
+        .course.dragging, .semester.dragging {
+            animation: wiggle 0.5s infinite;
+        }
+        
         .allcourses {
             border: 2px dashed #ccc;
         }
@@ -126,6 +139,9 @@
 <script>
     document.querySelectorAll('.course').forEach(course => {
         course.addEventListener('dragstart', drag);
+        course.addEventListener('dragend', function() {
+            this.classList.remove('dragging');
+        });
     });
 
     function allowDrop(event) {
@@ -155,9 +171,11 @@
             }
         }
         semester.classList.remove('over');
+        course.classList.remove('dragging');
     }
     function drag(event) {
         event.dataTransfer.setData('text', event.target.id);
+        event.target.classList.add('dragging');
     }
     document.getElementById('starting-year').addEventListener('change', function() {
         const startingYear = this.value - 1;
