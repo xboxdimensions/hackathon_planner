@@ -13,7 +13,6 @@
         .container {
             display: flex;
             justify-content: space-between;
-            max-width: 900px;
             margin: auto;
         }
         .courses, .semesters {
@@ -30,7 +29,7 @@
         .course, .semester {
             padding: 10px;
             margin: 10px 0;
-            background-color: #007BFF;
+            background-color: purple;
             color: #fff;
             border-radius: 4px;
             cursor: pointer;
@@ -43,26 +42,76 @@
             color: #333;
         }
         .semester.over {
-            border-color: #007BFF;
+            border-color: purple;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <div class="semesters">
+        <h2>Degree Information</h2>
+        <label for="starting-year">Starting Year:</label>
+        <select id="starting-year">
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+            <option value="2027">2027</option>
+            <option value="2028">2028</option>
+        </select>
+        <br>
+        <label for="Course">Course:</label>
+        <select id="Course">
+            <option value="BEME">Bachelor of Engineering (Honours) and Master of Engineering</option>
+            <option value="BEHons">Bachelor of Engineering (Honours)</option>
+            <option value="Bcompsc">Bachelor of Computer Science</option>
+            <option value="Becom">Bachelor of Economics</option>
+            <option value="BAFEC">Bachelor of Advanced Finance and Economics (Honours)</option>
+        </select>
+    </div>
     <div class="courses">
         <h2>Available Courses</h2>
-        <div class="course" draggable="true" id="course1">Course 1</div>
-        <div class="course" draggable="true" id="course2">Course 2</div>
-        <div class="course" draggable="true" id="course3">Course 3</div>
-        <div class="course" draggable="true" id="course4">Course 4</div>
+        <div class="course" draggable="true" id="course1">ENGG1300: Introduction to Electrical Systems</div>
+        <div class="course" draggable="true" id="course2">INFS1200: Introduction to Information Systems</div>
+        <div class="course" draggable="true" id="course3">MATH1061: Discrete Mathematics</div>
+        <div class="course" draggable="true" id="course4">CSSE2002: Programming in the Large</div>
+        <div class="course" draggable="true" id="course5">CSSE2010: Introduction to Computer Systems</div>
+        <div class="course" draggable="true" id="course6">CSSE2310: Computer Systems Principles and Programming</div>
+        <div class="course" draggable="true" id="course7">DECO2500: Human-Computer Interaction</div>
+        <div class="course" draggable="true" id="course8">STAT2203: Probability Models & Data Analysis</div>
+        <div class="course" draggable="true" id="course9">COMP3400: Functional & Logic Programming</div>
+        <div class="course" draggable="true" id="course10">COMP3506: Algorithms & Data Structures</div>
+        <div class="course" draggable="true" id="course11">CSSE3012: The Software Process</div>
+        <div class="course" draggable="true" id="course12">CSSE3200: Software Engineering Studio: Design, Implement & Test</div>
+        <div class="course" draggable="true" id="course13">DECO3800: Design Computing Studio 3 - Proposal</div>
+        <div class="course" draggable="true" id="course14">DECO3801: Design Computing Studio 3 - Build</div>
+        <div class="course" draggable="true" id="course15">CSSE6400: Software Architecture</div>
+        <div class="course" draggable="true" id="course16">ENGG4900: Professional Practice and the Business Environment</div>
+        <div class="course" draggable="true" id="course17">ENGG7290: Engineering Placement Semester</div>
+        <div class="course" draggable="true" id="course18">ENGG7701: Engineering Grand Challenges</div>
     </div>
     <div class="semesters">
-        <h2>Semesters</h2>
-        <div class="semester" id="semester1" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
-        <div class="semester" id="semester2" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
-        <div class="semester" id="semester3" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 3</div>
-        <div class="semester" id="semester4" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 4</div>
+        <h2>2024</h2>
+        <div class="semester" id="semester1-1" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-1" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-1" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <h2>2025</h2>
+        <div class="semester" id="semester1-2" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-2" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-2" ondrop="drop(event)" ondragover="allowDrop(event)">Summer Semester</div>
+        <h2>2026</h2>
+        <div class="semester" id="semester1-3" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-3" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-3" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <h2>2027</h2>
+        <div class="semester" id="semester1-4" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-4" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-4" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <h2>2028</h2>
+        <div class="semester" id="semester1-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-5" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        
     </div>
 </div>
 
