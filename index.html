@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag and Drop Course Selection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 20px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            max-width: 900px;
+            margin: auto;
+        }
+        .courses, .semesters {
+            width: 45%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .courses h2, .semesters h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .course, .semester {
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #007BFF;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .semester {
+            min-height: 50px;
+            background-color: #f9f9f9;
+            border: 2px dashed #ccc;
+            color: #333;
+        }
+        .semester.over {
+            border-color: #007BFF;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="courses">
+        <h2>Available Courses</h2>
+        <div class="course" draggable="true" id="course1">Course 1</div>
+        <div class="course" draggable="true" id="course2">Course 2</div>
+        <div class="course" draggable="true" id="course3">Course 3</div>
+        <div class="course" draggable="true" id="course4">Course 4</div>
+    </div>
+    <div class="semesters">
+        <h2>Semesters</h2>
+        <div class="semester" id="semester1" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 3</div>
+        <div class="semester" id="semester4" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 4</div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.course').forEach(course => {
+        course.addEventListener('dragstart', drag);
+    });
+
+    function allowDrop(event) {
+        event.preventDefault();
+        event.currentTarget.classList.add('over');
+    }
+
+    function drop(event) {
+        event.preventDefault();
+        const data = event.dataTransfer.getData('text');
+        const course = document.getElementById(data);
+
+        if (!event.currentTarget.querySelector(`#${data}`)) {
+            event.currentTarget.appendChild(course);
+        }
+        event.currentTarget.classList.remove('over');
+    }
+
+    function drag(event) {
+        event.dataTransfer.setData('text', event.target.id);
+    }
+</script>
+
+</body>
+</html>
