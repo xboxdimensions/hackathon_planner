@@ -1,36 +1,7 @@
-import requests
-from course_scraper import course_finder
-
-headers = requests.utils.default_headers()
-headers.update(
-    {
-        'User-Agent': 'My User Agent 1.0',
-    }
-)
-courses = course_finder(2460)
-
-otherInfo = {'': "Duration"}
-
 relatedCourses = {'course-incompatible">': 'Incompatible',
                   'course-prerequisite">': "Prerequisite",
                   'course-companion">': "Companion",
                   'recommended-prerequisite">': "RecommendPreq"}
-
-
-def courseData(courses: dict) -> dict:
-    for courseCode, courseName in courses.items():
-        url = f"https://my.uq.edu.au/programs-courses/course.html?course_code={
-            courseCode}"
-        response = requests.get(url, headers=headers)
-        text = response.text
-        text = str(text)
-        courses[courseCode]["Offerings"] = offerings(text)
-        courses[courseCode]["Units"] = UnitAmount(text)
-        courses[courseCode]["Duration"] = durationLength(text)
-        for filter, header in relatedCourses.items():
-            courses[courseCode][header] = sidebar(text, filter)
-
-    return courses
 
 
 def UnitAmount(text: str) -> str:
@@ -83,6 +54,3 @@ def sidebar(text: str, filter: str) -> list:
                 if entry[0:4].isalpha() and entry[4:9].isdigit():
                     coursesFound.append(entry)
     return coursesFound
-
-
-print(courseData(courses))
