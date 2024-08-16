@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag and Drop Course Selection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 20px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin: auto;
+        }
+        .courses, .semesters {
+            width: 45%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .courses h2, .semesters h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .course, .semester {
+            padding: 10px;
+            margin: 10px 0;
+            background-color: purple;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .semester {
+            min-height: 50px;
+            background-color: #f9f9f9;
+            border: 2px dashed #ccc;
+            color: #333;
+        }
+        .semester.over {
+            border-color: purple;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="semesters">
+        <h2>Degree Information</h2>
+        <label for="starting-year">Starting Year:</label>
+        <select id="starting-year">
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+            <option value="2027">2027</option>
+            <option value="2028">2028</option>
+        </select>
+        <br>
+        <label for="Course">Course:</label>
+        <select id="Course">
+            <option value="BHealthSportPEHons">Bachelor of Health, Sport and Physical Education (Honours)</option>
+            <option value="BEHons">Bachelor of Engineering (Honours)</option>
+            <option value="BHealthSc">Bachelor of Health Sciences</option>
+            <option value="BVetScHons">Bachelor of Veterinary Science (Honours)</option>
+            <option value="BAAdvBusHons">Bachelor of Advanced Business (Honours)</option>
+        </select>
+    </div>
+    <div class="courses">
+        <h2>Available Courses</h2>
+        <div class="course" draggable="true" id="course1">ENGG1300: Introduction to Electrical Systems</div>
+        <div class="course" draggable="true" id="course2">INFS1200: Introduction to Information Systems</div>
+        <div class="course" draggable="true" id="course3">MATH1061: Discrete Mathematics</div>
+        <div class="course" draggable="true" id="course4">CSSE2002: Programming in the Large</div>
+        <div class="course" draggable="true" id="course5">CSSE2010: Introduction to Computer Systems</div>
+        <div class="course" draggable="true" id="course6">CSSE2310: Computer Systems Principles and Programming</div>
+        <div class="course" draggable="true" id="course7">DECO2500: Human-Computer Interaction</div>
+        <div class="course" draggable="true" id="course8">STAT2203: Probability Models & Data Analysis</div>
+        <div class="course" draggable="true" id="course9">COMP3400: Functional & Logic Programming</div>
+        <div class="course" draggable="true" id="course10">COMP3506: Algorithms & Data Structures</div>
+        <div class="course" draggable="true" id="course11">CSSE3012: The Software Process</div>
+        <div class="course" draggable="true" id="course12">CSSE3200: Software Engineering Studio: Design, Implement & Test</div>
+        <div class="course" draggable="true" id="course13">DECO3800: Design Computing Studio 3 - Proposal</div>
+        <div class="course" draggable="true" id="course14">DECO3801: Design Computing Studio 3 - Build</div>
+        <div class="course" draggable="true" id="course15">CSSE6400: Software Architecture</div>
+        <div class="course" draggable="true" id="course16">ENGG4900: Professional Practice and the Business Environment</div>
+        <div class="course" draggable="true" id="course17">ENGG7290: Engineering Placement Semester</div>
+        <div class="course" draggable="true" id="course18">ENGG7701: Engineering Grand Challenges</div>
+    </div>
+    <div class="semesters">
+        <h2>2024</h2>
+        <div class="semester" id="semester1-1" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-1" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-1" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <h2>2025</h2>
+        <div class="semester" id="semester1-2" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-2" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-2" ondrop="drop(event)" ondragover="allowDrop(event)">Summer Semester</div>
+        <h2>2026</h2>
+        <div class="semester" id="semester1-3" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-3" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-3" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <h2>2027</h2>
+        <div class="semester" id="semester1-4" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-4" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-4" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <h2>2028</h2>
+        <div class="semester" id="semester1-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-5" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <button id="add-year-button">Add Year</button> 
+    </div>
+</div>
+<script>
+    document.querySelectorAll('.course').forEach(course => {
+        course.addEventListener('dragstart', drag);
+    });
+
+    function allowDrop(event) {
+        event.preventDefault();
+        event.currentTarget.classList.add('over');
+    }
+
+    function drop(event) {
+        event.preventDefault();
+        const data = event.dataTransfer.getData('text');
+        const course = document.getElementById(data);
+
+        if (!event.currentTarget.querySelector(`#${data}`)) {
+            event.currentTarget.appendChild(course);
+        }
+        event.currentTarget.classList.remove('over');
+    }
+
+    function drag(event) {
+        event.dataTransfer.setData('text', event.target.id);
+    }
+    document.getElementById('starting-year').addEventListener('change', function() {
+        const startingYear = this.value - 1;
+        const semesterContainers = document.querySelectorAll('.semesters h2');
+
+        semesterContainers.forEach((container, index) => {
+            const year = parseInt(startingYear) + index;
+            container.textContent = year;
+        });
+        
+    });
+</script>
+
+</body>
+</html>
