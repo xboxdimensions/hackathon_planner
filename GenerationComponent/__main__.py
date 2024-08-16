@@ -2,7 +2,7 @@
 
 Responsible for connecting the differrent modules/sub components"""
 
-BLANK = 'XXXX0000'
+from timetable import Timetable
 
 
 USER_OPTIONS = {"ProgramLength" : 3, # years
@@ -18,7 +18,9 @@ PROGRAM_OPTIONS = {"Required" : ['CSSE1001',
 					"ProgramElectives": ['COMP3400', 'CSSE2010', 'MATH1061']
 					} 
 
-def generate_options(UserOptions, ProgramOptions):
+
+
+def generate_options(UserOptions={}, ProgramOptions={}):
 	"""Generates a plan with blanks - along with a set of options for those blanks.
 
 	Eg returns: {1: [['CSSE1001', 'MATH1051', BLANK, BLANK],
@@ -27,5 +29,10 @@ def generate_options(UserOptions, ProgramOptions):
 				 	 [SEM2]]
 				}
 	"""
-	return {1: [BLANK]} # TODO
 
+	return Timetable()
+
+
+if __name__ == "__main__":
+	options = generate_options(USER_OPTIONS, PROGRAM_OPTIONS)
+	print(options)
