@@ -22,6 +22,7 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
+            cursor: move;
         }
         .courses h2, .semesters h2 {
             margin-bottom: 20px;
@@ -49,10 +50,20 @@
             transition: transform 0.3s ease;
         }
 
-        .course.dragging, .semester.dragging {
-            animation: wiggle 0.5s infinite;
+        .course.dragging {
+        opacity: 0.5; /* Make the course slightly transparent while being dragged */
+        transform: scale(1.1); /* Make the course slightly larger while being dragged */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Add a shadow effect while being dragged */
         }
-        
+        .course.dragging::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.2); /* Add a semi-transparent overlay while being dragged */
+        }
         .allcourses {
             border: 2px dashed #ccc;
         }
@@ -82,13 +93,9 @@
         </select>
         <br>
         <label for="Course">Course:</label>
-        <select id="Course">
-            <option value="BHealthSportPEHons">Bachelor of Health, Sport and Physical Education (Honours)</option>
-            <option value="BEHons">Bachelor of Engineering (Honours)</option>
-            <option value="BHealthSc">Bachelor of Health Sciences</option>
-            <option value="BVetScHons">Bachelor of Veterinary Science (Honours)</option>
-            <option value="BAAdvBusHons">Bachelor of Advanced Business (Honours)</option>
-        </select>
+        <select id="courseSelect">
+            <option value="">Select a Course</option>
+          </select>
     </div>
     <div class="courses">
         <h2>Available Courses</h2>
@@ -187,6 +194,119 @@
         });
         
     });
+    const degreeCourses = {
+  "1602": "Diploma in Languages",
+  "2000": "Bachelor of Arts",
+  "2007": "Bachelor of Agribusiness",
+  "2031": "Bachelor of Science (Honours)",
+  "2033": "Bachelor of Social Science (Honours)",
+  "2040": "Bachelor of Journalism",
+  "2041": "Bachelor of Journalism (Honours)",
+  "2052": "Bachelor of Arts (Honours)",
+  "2063": "Bachelor of Regional and Town Planning",
+  "2066": "Bachelors of Arts / Education (Secondary)",
+  "2102": "Bachelors of Journalism / Arts",
+  "2129": "Bachelor of Business Management (Honours)",
+  "2131": "Bachelor of Commerce (Honours)",
+  "2132": "Bachelor of Economics (Honours)",
+  "2139": "Bachelor of Advanced Business (Honours)",
+  "2140": "Bachelor of Advanced Finance and Economics (Honours)",
+  "2142": "Bachelors of Arts / Laws (Honours)",
+  "2171": "Bachelor of Business Management",
+  "2175": "Bachelors of Business Management / Arts",
+  "2180": "Bachelors of Business Management / Commerce",
+  "2181": "Bachelors of Business Management / Economics",
+  "2235": "Bachelor of Information Technology (Honours)",
+  "2237": "Bachelor of Communication (Honours)",
+  "2241": "Bachelor of Nursing",
+  "2243": "Bachelor of Nursing (Honours)",
+  "2252": "Bachelor of Health Sciences",
+  "2253": "Bachelor of Health Sciences (Honours)",
+  "2261": "Bachelor of Midwifery",
+  "2264": "Bachelor of Human Services (Honours)",
+  "2266": "Bachelor of Midwifery (Honours)",
+  "2290": "Bachelors of Nursing / Midwifery",
+  "2293": "Bachelor of Architectural Design",
+  "2298": "Bachelors of Business Management / Education (Secondary)",
+  "2299": "Bachelors of Business Management / Information Technology",
+  "2306": "Bachelor of Education (Primary)",
+  "2312": "Bachelor of Education (Secondary)",
+  "2316": "Bachelor of International Studies",
+  "2317": "Bachelor of International Studies (Honours)",
+  "2320": "Diploma in Arts",
+  "2334": "Bachelors of Business Management / Laws (Honours)",
+  "2335": "Bachelors of Business Management / Science",
+  "2336": "Bachelor of Commerce",
+  "2337": "Bachelors of Commerce / Arts",
+  "2338": "Bachelors of Commerce / Economics",
+  "2339": "Bachelors of Commerce / Information Technology",
+  "2350": "Bachelor of Engineering (Honours) and Master of Engineering",
+  "2354": "Bachelor of Science (Honours) - Gatton",
+  "2355": "Bachelor of Music (Honours)",
+  "2357": "Bachelors of Music (Honours) / Education (Secondary)",
+  "2367": "Bachelor of Dental Science (Honours)",
+  "2368": "Bachelor of Occupational Therapy (Honours)",
+  "2369": "Bachelor of Physiotherapy (Honours)",
+  "2370": "Bachelor of Speech Pathology (Honours)",
+  "2371": "Bachelor of Exercise and Sport Sciences (Honours)",
+  "2372": "Bachelor of Health, Sport and Physical Education (Honours)",
+  "2373": "Bachelor of Pharmacy (Honours)",
+  "2376": "Bachelor of Environmental Management (Honours)",
+  "2378": "Bachelor of Veterinary Science (Honours)",
+  "2379": "Bachelor of Psychological Science (Honours)",
+  "2380": "Bachelor of Education (Primary) (Honours)",
+  "2381": "Bachelor of Regional and Town Planning (Honours)",
+  "2382": "Bachelor of Social Work (Honours)",
+  "2387": "Bachelor of Veterinary Technology",
+  "2388": "Bachelor of Wildlife Science",
+  "2392": "Bachelors of Agribusiness / Wildlife Science",
+  "2405": "Bachelors of Music (Honours) / Arts",
+  "2413": "Bachelor of Clinical Exercise Physiology (Honours)",
+  "2414": "Bachelor of Advanced Humanities (Honours)",
+  "2415": "Bachelor of Biomedical Science",
+  "2417": "Bachelor of Equine Science (Honours)",
+  "2419": "Bachelor of Wildlife Science (Honours)",
+  "2421": "Bachelor of Mathematics (Honours)",
+  "2422": "Bachelor of Veterinary Technology (Honours)",
+  "2423": "Bachelor of Biomedical Science (Honours)",
+  "2448": "Bachelor of Agricultural Science",
+  "2449": "Bachelors of Agribusiness / Agricultural Science",
+  "2450": "Bachelor of Agricultural Science (Honours)",
+  "2451": "Bachelor of Computer Science",
+  "2452": "Bachelor of Computer Science (Honours)",
+  "2453": "Bachelor of Information Technology",
+  "2454": "Bachelor of Design",
+  "2455": "Bachelor of Engineering (Honours)",
+  "2456": "Bachelor of Biotechnology",
+  "2457": "Bachelor of Biotechnology (Honours)",
+  "2458": "Bachelor of Environmental Science",
+  "2459": "Bachelor of Environmental Science (Honours)",
+  "2460": "Bachelor of Mathematics",
+  "2461": "Bachelor of Science",
+  "2463": "Bachelors of Computer Science / Business Management",
+  "2464": "Bachelors of Computer Science / Commerce",
+  "2465": "Bachelors of Commerce / Laws (Honours)",
+  "2466": "Bachelors of Commerce / Science",
+  "2467": "Bachelor of Economics",
+  "2468": "Bachelors of Economics / Arts",
+  "2469": "Bachelors of Economics / Laws (Honours)",
+  "2470": "Bachelors of Economics / Science",
+  "2471": "Bachelor of Laws (Honours)",
+  "2472": "Bachelors of Science / Laws (Honours)",
+  "2473": "Bachelor of Tourism, Hospitality and Event Management"
+}
+
+
+for (const courseCode in degreeCourses) {
+document.getElementById("courseSelect").innerHTML += `<option value="${courseCode}">${degreeCourses[courseCode]}</option>`;
+}
+
+// Add event listener to the select element to get the selected course code
+document.getElementById('courseSelect').addEventListener('change', function() {
+    const courseCode = this.value;
+    console.log(courseCode);
+});
+
 </script>
 
 </body>
