@@ -1,0 +1,16 @@
+payload -> components -> payload
+title: -> header -> title
+
+rules: -> body - dictionaries
+header: rules - <strong > NUMBER < /strong > <strong > SET < /strong >
+-> body: - dictonaries
+header - title
+body: [
+    dict: {unitsMaximum, code, orgName, subtype, name}
+
+    if subtype = "Major"/"Minor" - take
+    https://my.uq.edu.au/programs-courses/requirements/plan/{code}/{year} /
+    and parse it
+
+    if equivalenceGroup - iterate options
+]
