@@ -76,7 +76,6 @@ def courseData(courses: dict) -> dict:
 
     return courses
 
-
 def getNames(num: list[int]) -> dict[str:int]:
     with open("courseNames.json", "w") as f:
         names = {}

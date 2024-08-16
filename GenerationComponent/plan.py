@@ -1,6 +1,6 @@
 """Plan class"""
 from semesterIterator import semIter
-from prerequisites import prerequisites
+from prerequisites import prerequisites, SEM_INFO
 
 
 BLANK = 'XXXX0000'
@@ -16,6 +16,11 @@ class Plan:
 		self._options = {"required" : set(), "majorElectives" : []}
 
 		self._courses = set() # QUICK WAY OF CHECKING IF USER IS TAKING COURSE
+
+	def add_completed(self, course: str):
+		"""Used for user already completed that are not on the plan"""
+		print("added", course)
+		self._courses.add(course)
 
 	def add_required_choice(self, course: tuple):
 		"""Adds a required choice in the plan, this needs to be dealt
@@ -42,11 +47,13 @@ class Plan:
 		"""
 		
 		if course in self._courses:
-			return False # common occurance dont print anything
+			return 0 # common occurance dont print anything
 		# print("Adding course", course, "to", year, semester)
 		if (year < 1 or year > self._years or semester not in {1, 2}): # Validation Checking
 			print(f"Could not add course. Year {year}, Semester {semester} is invalid.")
 			return 1
+
+		# TODO SEMESTER OFFERRINGS 
 
 		# Going through and adding course as first blank spot
 		for spot in self._data[year][semester-1]:
@@ -65,17 +72,22 @@ class Plan:
 			for j, semester in enumerate(year):
 				if course in semester:
 					return i+1, j+1
+		return 1, 0
 
 	def add_course(self, course: str) -> bool:
 		"""Adds a course to the first availiable spot taking into account
 		prerequisites
 		"""
+		if isinstance(course, tuple):
+			self.add_required_choice(course) # THEY WILL HAVE TO CHOOSE
+			course = course[0] # take the first option as default
 		if course in self._courses:
 			return
 
 		# First recurislvey add the prerequisites and their prereqs etc
 		hy, hs = 1, 1 # highest year and semester
-		for prereq in prerequisites(course):
+		ps = prerequisites(course).copy()
+		for prereq in ps:
 			if isinstance(prereq, tuple):
 				# There is a choice one or the other
 				self.add_required_choice(prereq)
@@ -91,11 +103,12 @@ class Plan:
 
 		# add this course finlaly
 		s = iter(semIter( hy, hs))
-		if prerequisites(course):
+		if ps:
 			next(s)
 		code = self._add(course, s.year, s.sem)
-		print("adding ", course, code)
-		while code == 1:
+		print("adding ", course)
+		while code == -1:
+			print(s.year, code)
 			next(s)
 			self._add(course, s.year, s.sem)
 
