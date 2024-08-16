@@ -42,7 +42,7 @@ def course_finder(program_code: int) -> tuple[dict, dict]:
     return (courses, plans)
 
 
-def courseData(courses: dict) -> dict:
+def courseData(courses: dict = {}) -> dict:
     for courseCode in courses.keys():
         url = f"https://my.uq.edu.au/programs-courses/course.html?course_code={
             courseCode}"
@@ -56,7 +56,6 @@ def courseData(courses: dict) -> dict:
             courses[courseCode][header] = sidebar(text, filter)
 
     return courses
-
 
 def getNames(num: list[int]) -> dict[str:int]:
     with open("courseNames.json", "w") as f:

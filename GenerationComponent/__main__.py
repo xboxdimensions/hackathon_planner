@@ -7,7 +7,7 @@ from pprint import pprint
 
 USER_OPTIONS = {"ProgramLength" : 3, # years
 				"CourseLoad" : 4, # courses / semester
-				"AlreadyCompleted" : ['CSSE1001', 'MATH1051']
+				"Completed" : ['CSSE1001', 'MATH1051']
 				}
 
 PROGRAM_OPTIONS = {"Required" : ['COMP2048', 'COMP3506', 'CSSE1001', 'CSSE2002',
@@ -33,11 +33,10 @@ def generate_options(UserOptions={}, ProgramOptions={}):
 	# Goes through the requirements trying to add each course to the first 
 	# possible place.
 	# If a requirement has two options- this will be displayed to the user
+	for course in UserOptions["Completed"]:
+			plan.add_completed(course)
+			continue
 	for course in requirements:
-		if isinstance(course, tuple):
-			plan.add_required_choice(course)
-			continue # have this dealt with later
-		
 		plan.add_course(course)
 	return plan
 
