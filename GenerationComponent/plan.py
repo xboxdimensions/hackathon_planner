@@ -37,10 +37,10 @@ class Plan:
 		True = Successful addition, False = Did not get added
 		
 		"""
-		print("Adding course", course, "to", year, semester)
+		
 		if course in self._courses:
 			return False # common occurance dont print anything
-		
+		print("Adding course", course, "to", year, semester)
 		if (year < 1 or year > self._years or semester not in {1, 2}): # Validation Checking
 			print(f"Could not add course. Year {year}, Semester {semester} is invalid.")
 			return False
