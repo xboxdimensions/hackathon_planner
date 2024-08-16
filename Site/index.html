@@ -306,18 +306,19 @@ document.getElementById('courseSelect').addEventListener('change', function() {
     const courseCode = this.value;
     console.log(courseCode);
 
-        const response = fetch('/api', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({courseCode})
-        })
-        .then(response => response.json())
-        .then(data => { })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+    // Make a fetch request to the server-side API endpoint
+    const response = fetch('http://127.0.0.1:5000/api', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({courseCode})
+    })
+    .then(response => response.json())
+    .then(data => {})
+    .catch((error) => {
+        console.error('Error:', error);
+    });
 
 });
 
