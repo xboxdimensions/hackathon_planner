@@ -3,7 +3,6 @@
 Responsible for connecting the differrent modules/sub components"""
 
 from plan import Plan
-from semesterIterator import semIter
 from pprint import pprint
 
 USER_OPTIONS = {"ProgramLength" : 3, # years
@@ -17,13 +16,6 @@ PROGRAM_OPTIONS = {"Required" : ['COMP2048', 'COMP3506', 'CSSE1001', 'CSSE2002',
 					"ProgramElectives": ['ELECTIVES LIST HERE']
 					} 
 
-COURSE_INFO = {"CSSE2002" : ['CSSE1001'], "COMP2048": ['CSSE2002'], "COMP3506": ['CSSE2002', 'MATH1061']}
-# TODO ADD SUPPORT FOR PREREQUISITE A OR (B AND C)
-
-def prerequisites(course):
-	if course not in COURSE_INFO.keys():
-		return []
-	return COURSE_INFO[course]
 
 def generate_options(UserOptions={}, ProgramOptions={}):
 	"""Generates a plan with blanks - along with a set of options for those blanks.
@@ -45,14 +37,8 @@ def generate_options(UserOptions={}, ProgramOptions={}):
 		if isinstance(course, tuple):
 			plan.add_required_choice(course)
 			continue # have this dealt with later
-		prereqs = prerequisites(course)
-		while prereqs:
-			print(prereqs)
-			# add the prerequisite to first possible place
-			i = iter(semIter()) # iterator for year and semester
-			plan.add_course(prereqs[0], i.year, i.sem)
-			prereqs.pop(0)
-		plan.add_course(course, i.year, i.sem)
+		
+		plan.add_course(course)
 	return plan
 
 
