@@ -22,6 +22,7 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
+            cursor: move;
         }
         .courses h2, .semesters h2 {
             margin-bottom: 20px;
@@ -49,10 +50,20 @@
             transition: transform 0.3s ease;
         }
 
-        .course.dragging, .semester.dragging {
-            animation: wiggle 0.5s infinite;
+        .course.dragging {
+        opacity: 0.5; /* Make the course slightly transparent while being dragged */
+        transform: scale(1.1); /* Make the course slightly larger while being dragged */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Add a shadow effect while being dragged */
         }
-        
+        .course.dragging::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.2); /* Add a semi-transparent overlay while being dragged */
+        }
         .allcourses {
             border: 2px dashed #ccc;
         }
@@ -289,6 +300,12 @@
 for (const courseCode in degreeCourses) {
 document.getElementById("courseSelect").innerHTML += `<option value="${courseCode}">${degreeCourses[courseCode]}</option>`;
 }
+
+// Add event listener to the select element to get the selected course code
+document.getElementById('courseSelect').addEventListener('change', function() {
+    const courseCode = this.value;
+    console.log(courseCode);
+});
 
 </script>
 
