@@ -1,4 +1,7 @@
 """Plan class"""
+from semesterIterator import semIter
+from prerequisites import prerequisites
+
 
 BLANK = 'XXXX0000'
 SEMESTERS = 2
@@ -14,7 +17,7 @@ class Plan:
 
 		self._courses = set() # QUICK WAY OF CHECKING IF USER IS TAKING COURSE
 
-	def add_required_choice(self, course: str):
+	def add_required_choice(self, course: tuple):
 		"""Adds a required choice in the plan, this needs to be dealt
 		with until the plan can be finalised.
 		
@@ -27,23 +30,23 @@ class Plan:
 		"""Returns the program length in years"""
 		return self._years
 
-	def add_course(self, course: str, year: int, semester: int) -> bool:
+	def _add(self, course: str, year: int, semester: int) -> int:
 		"""Adds course to first blank spot in given semester.
 
 		DOES NOT CHECK FOR PREREQUISITES THIS IS DONE BEFORE CALLING THIS!!
 
 		TODO CHECK IF COURSE IS AVAILIABLE THIS SEMESTER
 		
-		True = Successful addition, False = Did not get added
+		0 = Successful addition, 1 = bad year, -1 = no spots
 		
 		"""
 		
 		if course in self._courses:
 			return False # common occurance dont print anything
-		print("Adding course", course, "to", year, semester)
+		# print("Adding course", course, "to", year, semester)
 		if (year < 1 or year > self._years or semester not in {1, 2}): # Validation Checking
 			print(f"Could not add course. Year {year}, Semester {semester} is invalid.")
-			return False
+			return 1
 
 		# Going through and adding course as first blank spot
 		for spot in self._data[year][semester-1]:
@@ -52,11 +55,49 @@ class Plan:
 				sem.pop() # remove last (blank) course
 				sem.insert(0, course)
 				self._courses.add(course)
-				return True
-		print(f"No spots availiable in year {year}, semester {semester}")
-		return False
+				return 0
+		# print(f"No spots availiable in year {year}, semester {semester}")
+		return -1
 		
+	def get_course_sem(self, course: str) -> tuple:
+		"""Gets the year, semester of a course"""
+		for i, year in enumerate(self._data.values()):
+			for j, semester in enumerate(year):
+				if course in semester:
+					return i+1, j+1
 
+	def add_course(self, course: str) -> bool:
+		"""Adds a course to the first availiable spot taking into account
+		prerequisites
+		"""
+		if course in self._courses:
+			return
+
+		# First recurislvey add the prerequisites and their prereqs etc
+		hy, hs = 1, 1 # highest year and semester
+		for prereq in prerequisites(course):
+			if isinstance(prereq, tuple):
+				# There is a choice one or the other
+				self.add_required_choice(prereq)
+				# choose the first one for now # TODO
+				prereq = prereq[0]
+			elif prereq not in self._courses:
+				self.add_course(prereq)
+			# get the last semester a prerequisite is in 
+			yr, se = self.get_course_sem(prereq)
+			if hy > yr or (hy == yr and se > hs):
+				hy = yr
+				hs = se
+
+		# add this course finlaly
+		s = iter(semIter( hy, hs))
+		if prerequisites(course):
+			next(s)
+		code = self._add(course, s.year, s.sem)
+		print("adding ", course, code)
+		while code == 1:
+			next(s)
+			self._add(course, s.year, s.sem)
 
 
 	def get_data(self) -> dict:
