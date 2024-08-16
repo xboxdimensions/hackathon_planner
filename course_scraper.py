@@ -15,6 +15,7 @@ Returns courses in the form:
 
 def course_finder(program_code: int):
     courses = {}
+    plans = {}
     url = f"https://my.uq.edu.au/programs-courses/requirements/program/{
         program_code}/2024"
     response = requests.get(url, headers=headers)
@@ -26,5 +27,28 @@ def course_finder(program_code: int):
             index = t.find('fromTerm')-3
             # end = t.find('",', index)
             i = t.find(',"name":"')+9
-            courses[t[1:9]] = t[i:index]  # :end]
+            courses[t[1:9]] = {}
+            courses[t[1:9]]["Name"] = t[i:index].replace("\\", "")  # :end]
+        # elif t[1:7].isalpha() and t[7:11].isdigit():
+            # print(t[1:11])
     return courses
+
+
+def getNames(num: list[int]) -> dict[str:int]:
+    with open("courseNames.json", "w") as f:
+        names = {}
+        for code in num[:100]:
+            url = f"https://my.uq.edu.au/programs-courses/requirements/program/{
+                code}/2024"
+            response = requests.get(url, headers=headers)
+            text = response.text
+            text = str(text)
+            try:
+                text = text.split('"authorGivenName":"')[1]
+                text = text.split('"name":"')[1]
+                text = text.split('","template')[0]
+                text = text.replace("\\", "")
+                names[code] = text
+            except IndexError:
+                continue
+        f.write(str(names))
