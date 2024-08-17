@@ -15,15 +15,22 @@
             justify-content: space-between;
             margin: auto;
         }
+        .courses{
+            overflow-y: scroll;
+            height: 500px; 
+            position: sticky;
+            top: 0;
+
+        }
         .courses, .semesters {
             width: 45%;
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            cursor: move;
+            transition: transform 0.3s ease;     
         }
+
         .courses h2, .semesters h2 {
             margin-bottom: 20px;
             text-align: center;
@@ -36,18 +43,13 @@
             border-radius: 4px;
             cursor: pointer;
             text-align: center;
-        }
-        @keyframes wiggle {
-        0% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        50% { transform: translateX(5px); }
-        75% { transform: translateX(-5px); }
-        100% { transform: translateX(0); }
+            cursor: grab; 
         }
 
         .course, .semester {
             /* ... existing styles ... */
             transition: transform 0.3s ease;
+            
         }
 
         .course.dragging {
@@ -95,7 +97,61 @@
         <label for="Course">Course:</label>
         <select id="courseSelect">
             <option value="">Select a Course</option>
-          </select>
+        </select>
+        <label for="laod">Load:</label>
+        <select id="laod">
+            <option value="select">Select a load</option>
+            <option value="part">Full time</option>
+            <option value="Full">Part time</option>
+        </select>
+        <button id="submit">Submit</button>
+    </div>
+
+    <div class="semesters">
+        <h2>2024</h2>
+        <div class="semester" id="semester1-1" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-1" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-1" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <h2>2025</h2>
+        <div class="semester" id="semester1-2" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-2" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-2" ondrop="drop(event)" ondragover="allowDrop(event)">Summer Semester</div>
+        <h2>2026</h2>
+        <div class="semester" id="semester1-3" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-3" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-3" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <h2>2027</h2>
+        <div class="semester" id="semester1-4" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-4" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-4" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <h2>2028</h2>
+        <div class="semester" id="semester1-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-5" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <h2>2029</h2>
+        <div class="semester" id="semester1-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-5" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <h2>2030</h2>
+        <div class="semester" id="semester1-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-5" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <h2>2031</h2>
+        <div class="semester" id="semester1-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-5" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <h2>2032</h2>
+        <div class="semester" id="semester1-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-5" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <h2>2033</h2>
+        <div class="semester" id="semester1-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-5" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <h2>2034</h2>
+        <div class="semester" id="semester1-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-5" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
     </div>
     <div class="courses">
         <h2>Available Courses</h2>
@@ -119,28 +175,6 @@
         <div class="course" draggable="true" id="course17">ENGG7290: Engineering Placement Semester</div>
         <div class="course" draggable="true" id="course18">ENGG7701: Engineering Grand Challenges</div>
     </div>
-    </div>
-    <div class="semesters">
-        <h2>2024</h2>
-        <div class="semester" id="semester1-1" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
-        <div class="semester" id="semester2-1" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
-        <div class="semester" id="semester3-1" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
-        <h2>2025</h2>
-        <div class="semester" id="semester1-2" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
-        <div class="semester" id="semester2-2" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
-        <div class="semester" id="semester3-2" ondrop="drop(event)" ondragover="allowDrop(event)">Summer Semester</div>
-        <h2>2026</h2>
-        <div class="semester" id="semester1-3" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
-        <div class="semester" id="semester2-3" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
-        <div class="semester" id="semester3-3" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
-        <h2>2027</h2>
-        <div class="semester" id="semester1-4" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
-        <div class="semester" id="semester2-4" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
-        <div class="semester" id="semester3-4" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
-        <h2>2028</h2>
-        <div class="semester" id="semester1-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
-        <div class="semester" id="semester2-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
-        <div class="semester" id="semester3-5" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
     </div>
 </div>
 <script>
@@ -303,8 +337,26 @@ document.getElementById("courseSelect").innerHTML += `<option value="${courseCod
 
 // Add event listener to the select element to get the selected course code
 document.getElementById('courseSelect').addEventListener('change', function() {
-    const courseCode = this.value;
-    console.log(courseCode);
+    const ProgramCode = this.value;
+    console.log(ProgramCode);
+
+    // Make a fetch request to the server-side API endpoint
+    const response = fetch('/api', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        
+        body: JSON.stringify({ProgramCode: ProgramCode, 
+            startingYear: document.getElementById('starting-year').value,
+        Load: document.getElementById('laod').value})
+    })
+    .then(response => response.json())
+    .then(data => {})
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+
 });
 
 </script>
