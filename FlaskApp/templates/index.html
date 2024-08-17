@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drag and Drop Course Selection</title>
+    <title>Course planner</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-color: purple;
             margin: 20px;
         }
         .container {
             display: flex;
             justify-content: space-between;
-            margin: auto;
         }
         .courses{
             overflow-y: scroll;
-            height: 500px; 
+            height:fit-content;
             position: sticky;
             top: 0;
 
@@ -45,6 +44,7 @@
             text-align: center;
             cursor: grab; 
         }
+        
 
         .course, .semester {
             /* ... existing styles ... */
@@ -78,11 +78,18 @@
         .semester.over {
             border-color: purple;
         }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: purple;
+        }
     </style>
 </head>
 <body>
-
 <div class="container">
+    <div class="semesters">
+        <h1>UQCS Planner</h1>
+    </div>
     <div class="semesters">
         <h2>Degree Information</h2>
         <label for="starting-year">Starting Year:</label>
@@ -91,7 +98,6 @@
             <option value="2025">2025</option>
             <option value="2026">2026</option>
             <option value="2027">2027</option>
-            <option value="2028">2028</option>
         </select>
         <br>
         <label for="Course">Course:</label>
@@ -104,9 +110,10 @@
             <option value="part">Full time</option>
             <option value="Full">Part time</option>
         </select>
-        <button id="submit">Submit</button>
     </div>
-
+</div>
+<br>
+<div class="container">
     <div class="semesters">
         <h2>2024</h2>
         <div class="semester" id="semester1" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 1</div>
@@ -120,9 +127,6 @@
         <h2>2027</h2>
         <div class="semester" id="semester7" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 1</div>
         <div class="semester" id="semester8" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 2</div>
-        <h2>2028</h2>
-        <div class="semester" id="semester9" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 1</div>
-        <div class="semester" id="semester10" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 2</div>
     </div>
     <div class="courses">
         <h2>Available Courses</h2>
@@ -337,7 +341,8 @@ document.getElementById('courseSelect').addEventListener('change', function() {
         // Clear all children before appending new courses
         document.getElementById("cou").innerHTML = '';
         for (const Avcourse in data.AvailiableCourses) {
-            const newCourse = document.createElement('div');
+            if (data.AvailiableCourses[Avcourse].length < 9){
+                const newCourse = document.createElement('div');
             newCourse.classList.add('course');
             newCourse.textContent = data.AvailiableCourses[Avcourse];
             newCourse.id = newCourse.textContent;
@@ -348,12 +353,14 @@ document.getElementById('courseSelect').addEventListener('change', function() {
             });
             // Append the new course to the semester
             document.getElementById("cou").appendChild(newCourse);
+            }
         }
         int = 0;
         for (year in (data.Plan)){
             for(semester in data.Plan[year]){
                 int +=1
                 document.getElementById(`semester${int}`).innerHTML = '';
+                document.getElementById(`semester${int}`).textContent = "Semester " + int;
                 for(course in data.Plan[year][semester]){
                     const newCourse = document.createElement('div');
                     newCourse.classList.add('course');
