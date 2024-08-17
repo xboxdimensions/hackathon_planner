@@ -47,7 +47,6 @@
         
 
         .course, .semester {
-            /* ... existing styles ... */
             transition: transform 0.3s ease;
             
         }
@@ -91,7 +90,7 @@
         <h1>UQCS Planner</h1>
     </div>
     <div class="semesters">
-        <h2>Degree Information</h2>
+        <h1>Degree Information</h1>
         <label for="starting-year">Starting Year:</label>
         <select id="starting-year">
             <option value="2024">2024</option>
@@ -104,6 +103,10 @@
         <select id="courseSelect">
             <option value="">Select a Course</option>
         </select>
+        <label for="plan">Plan<label>
+            <select id="planselect">
+            <option value="">Select a Plan</option>
+        </select>
         <label for="laod">Load:</label>
         <select id="laod">
             <option value="select">Select a load</option>
@@ -115,6 +118,7 @@
 <br>
 <div class="container">
     <div class="semesters">
+        <h1>Courses</h1>
         <h2>2024</h2>
         <div class="semester" id="semester1" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 1</div>
         <div class="semester" id="semester2" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 2</div>
@@ -128,8 +132,9 @@
         <div class="semester" id="semester7" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 1</div>
         <div class="semester" id="semester8" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 2</div>
     </div>
+
     <div class="courses">
-        <h2>Available Courses</h2>
+        <h1>Available Courses</h1>
         <div class="semester" id="cou" ondrop="drop(event)" ondragover="allowDrop(event)">
         <!-- <div class="course" draggable="true" id="course1">ENGG1300: Introduction to Electrical Systems</div>
         <div class="course" draggable="true" id="course2">INFS1200: Introduction to Information Systems</div>
@@ -347,6 +352,7 @@ document.getElementById('courseSelect').addEventListener('change', function() {
             newCourse.textContent = data.AvailiableCourses[Avcourse];
             newCourse.id = newCourse.textContent;
             newCourse.draggable = true;
+            newCourse.style.backgroundColor = 'black';
             newCourse.addEventListener('dragstart', drag);
             newCourse.addEventListener('dragend', function() {
                 this.classList.remove('dragging');
@@ -371,7 +377,6 @@ document.getElementById('courseSelect').addEventListener('change', function() {
                     newCourse.addEventListener('dragend', function() {
                         this.classList.remove('dragging');
                     });
-                    // Append the new course to the semester
                     
                     document.getElementById(`semester${int}`).appendChild(newCourse);
                 }
