@@ -34,7 +34,8 @@ def generate():
 
     # Get the program options & data
     
-    programOptions = {"Required":seperatedTabs(data['ProgramCode']), "ProgramElectives":[]}
+    seperatedTabs(data['ProgramCode']) 
+    programOptions = {"Required": ['CSSE1001'], "ProgramElectives":[]}
     # print(programOptions["Required"])
     
     #
