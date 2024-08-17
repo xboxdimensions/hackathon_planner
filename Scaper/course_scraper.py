@@ -1,5 +1,6 @@
 import requests
-from Scaper.courseData import relatedCourses, sidebar, UnitAmount, durationLength, offerings
+from courseData import relatedCourses, sidebar, UnitAmount, durationLength, offerings, preqs, name
+
 headers = requests.utils.default_headers()
 headers.update(
     {
@@ -10,6 +11,7 @@ num = [1602, 2000, 2007, 2031, 2033, 2040, 2041, 2052, 2063, 2066, 2102, 2129, 2
        5077, 5079, 5084, 5086, 5090, 5096, 5116, 5119, 5127, 5131, 5145, 5147, 5151, 5164, 5181, 5188, 5193, 5199, 5221, 5228, 5229, 5240, 5248, 5251, 5255, 5257, 5267, 5290, 5299, 5319, 5326, 5333, 5336, 5341, 5343, 5364, 5365, 5368, 5369, 5370, 5398, 5399, 5420, 5429, 5430, 5444, 5448, 5454, 5463, 5473, 5478, 5479, 5491, 5497, 5498, 5500, 5519, 5520, 5522, 5523, 5527, 5528, 5530, 5533, 5535, 5547, 5550, 5551, 5556, 5557, 5558, 5559, 5560, 5561, 5562, 5564, 5565, 5566, 5571, 5573, 5576, 5580, 5581, 5583, 5584, 5585, 5590, 5591, 5592, 5596, 5597, 5598, 5599, 5600, 5602, 5607, 5609, 5610, 5616, 5625, 5627, 5641, 5643, 5646, 5648, 5650, 5651, 5660, 5666, 5677, 5678, 5681, 5682, 5683, 5684, 5685, 5688, 5689, 5690, 5692, 5695, 5703, 5704, 5705, 5706, 5708, 5711, 5712, 5718, 5722, 5725, 5726, 5728, 5729, 5730, 5734, 5736, 5737, 5738, 5739, 5740, 5741, 5742, 5743, 5744, 5745, 5746, 5747, 5748, 5749, 5750, 5751, 5752, 5753, 5754, 5755, 5759, 5760, 5761, 5763, 5764, 5765, 5766, 5767, 5771]
 
 # FUNCTION 1) GIVE programCode - return (courses, plans)
+
 
 def course_finder(program_code: int) -> tuple[dict, dict]:
     courses = {}
@@ -26,7 +28,6 @@ def course_finder(program_code: int) -> tuple[dict, dict]:
             # end = t.find('",', index)
             i = t.find(',"name":"')+9
             courses[t[1:9]] = {}
-            courses[t[1:9]]["Name"] = t[i:index].replace("\\", "")  # :end]
         elif all([t[1:7].isalpha(), t[7:11].isdigit(), t[1:11] not in plans]):
             # CODE : {TYPE, }
             code = t[1:11]
@@ -44,6 +45,7 @@ def course_finder(program_code: int) -> tuple[dict, dict]:
 
 # FUNCTION 2) input plans (see above) return courses (like above)
 
+
 def plan_finder(planCode: str) -> dict[str]:
     courses = {}
     url = f"https://my.uq.edu.au/programs-courses/requirements/plan/{
@@ -58,13 +60,13 @@ def plan_finder(planCode: str) -> dict[str]:
             # end = t.find('",', index)
             i = t.find(',"name":"')+9
             courses[t[1:9]] = {}
-            courses[t[1:9]]["Name"] = t[i:index].replace("\\", "")  # :end]
     return courses
 
 # FUNCTION 3) give courses (see above) and returns data
 
 
-def courseData(courses: dict) -> dict:
+def courseData(coursesList: list) -> dict:
+    courses = {course: dict() for course in coursesList}
     for courseCode in courses.keys():
         print("Now on " + courseCode)
         url = f"https://my.uq.edu.au/programs-courses/course.html?course_code={
@@ -72,18 +74,49 @@ def courseData(courses: dict) -> dict:
         response = requests.get(url, headers=headers)
         text = response.text
         text = str(text)
+        courses[courseCode]["Name"] = name(text)
         courses[courseCode]["Offerings"] = offerings(text)
         courses[courseCode]["Units"] = UnitAmount(text)
         courses[courseCode]["Duration"] = durationLength(text)
+        courses[courseCode]["Prerequisite"] = preqs(text)
         for filter, header in relatedCourses.items():
             courses[courseCode][header] = sidebar(text, filter)
 
     return courses
 
+
+# print(courseData(["INFS1200", "DECO1400"]))
+# Checks if inputted code exists or returns false
+
+
+def checkValid(courseCode):
+    url = f"https://my.uq.edu.au/programs-courses/course.html?course_code={
+        courseCode}"
+    response = requests.get(url, headers=headers)
+    text = response.text
+    text = str(text)
+    if ("This course is not currently offered, please contact the school or faculty of your program."
+            in text or "The course you requested could not be found." in text):
+        return False
+    else:
+        rangeS = text.find('<h1 id="course-title">')+22
+        text = text[rangeS:]
+        rangeE = text.find('</h1>')
+        text = text[:rangeE]
+        text = text.split(" ")
+        name = " ".join(text[0:-1])
+        code = text[-1]
+        code = code[1:-1]
+        courses = {}
+        courses[code] = {}
+        courses[code]["Name"] = name
+        return courseData(courses)
+
+
 def getNames(num: list[int]) -> dict[str:int]:
     with open("courseNames.json", "w") as f:
         names = {}
-        for code in num[:100]:
+        for code in num:
             url = f"https://my.uq.edu.au/programs-courses/requirements/program/{
                 code}/2024"
             response = requests.get(url, headers=headers)
