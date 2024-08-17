@@ -54,11 +54,9 @@ def offerings(text: str) -> list:
     rangeE = text.find("<!--")
     text = text[:rangeE]
     if "Semester 1" in text:
-        offerings.append("Semester 1")
+        offerings.append(1)
     if "Semester 2" in text:
-        offerings.append("Semester 2")
-    if "Summer Semester" in text:
-        offerings.append("Summer Semester")
+        offerings.append(2)
     return offerings
 
 

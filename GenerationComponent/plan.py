@@ -1,6 +1,7 @@
 """Plan class"""
 from GenerationComponent.semesterIterator import semIter
-from GenerationComponent.prerequisites import prerequisites, SEM_INFO
+from GenerationComponent.prerequisites import SEM_INFO
+from Scaper.courseData import preqs as prerequisites
 
 
 BLANK = 'XXXX0000'
