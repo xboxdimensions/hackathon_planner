@@ -1,7 +1,4 @@
-
-
-def test():
-	def split(s="CSSE2002 AND (MATH1061 OR (CSSE2010 AND STAT2202))"):
+def split(s: str) -> list:
 		if '(' in s or ')' in s:
 			s = ''.join(c for c in s if c not in '()')
 		if (" AND " in s) or (" OR " in s):
@@ -17,5 +14,3 @@ def test():
 			else:
 				return [(a, split(b))]
 		return s
-	print(split())
-test()
