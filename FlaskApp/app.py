@@ -5,6 +5,7 @@ from pprint import pprint
 sys.path.insert(0, os.path.abspath('../'))
 from GenerationComponent.generate import generateOptions
 from Scaper.course_scraper import scrapePlansAndCore
+from FlaskApp.data import degreeList
 DEVELOPMENT_ENV = True
 
 app = Flask(__name__)
@@ -12,7 +13,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index_copy.html", degreeList=degreeList)
 
 
 @app.route("/api", methods=["POST"])
@@ -34,6 +35,7 @@ def generate():
 
     # Get the program options & data
     info = scrapePlansAndCore(data['ProgramCode'])
+    pprint(info)
     required = info['core']
     electives = info['electives']
     programOptions = {"Required": required, "ProgramElectives":electives}
@@ -42,8 +44,9 @@ def generate():
     
     #
     userPlan = generateOptions(data, programOptions)
-    print(userPlan.get_extra())
-    return {"AvailiableCourses":electives+userPlan.get_extra(), "Plan":userPlan.get_return()}
+    rtrn = {"electives":electives,"CoreCourses":userPlan.get_extra('required'), "Plan":userPlan.get_return()}
+    print(rtrn)
+    return rtrn
      
 
 if __name__ == "__main__":
