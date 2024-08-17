@@ -4,18 +4,11 @@ import sys, os
 from pprint import pprint
 sys.path.insert(0, os.path.abspath('../'))
 from GenerationComponent.generate import generateOptions
-from Scaper.separated_tabs import seperatedTabs
-from Scaper.course_scraper import course_finder
+from Scaper.course_scraper import scrapePlansAndCore
 DEVELOPMENT_ENV = True
 
 app = Flask(__name__)
 
-def flatten(S):
-    if S == []:
-        return S
-    if isinstance(S[0], list):
-        return flatten(S[0]) + flatten(S[1:])
-    return S[:1] + flatten(S[1:])
 
 @app.route("/")
 def index():
@@ -40,18 +33,17 @@ def generate():
     data = request.get_json()
 
     # Get the program options & data
-    courses = seperatedTabs(data['ProgramCode'])
-    print(courses)
-    required = courses[0]
-    electives = courses[1:]
+    info = scrapePlansAndCore(data['ProgramCode'])
+    required = info['core']
+    electives = info['electives']
     programOptions = {"Required": required, "ProgramElectives":electives}
     # pprint(programOptions)
     # print(programOptions["Required"])
     
     #
     userPlan = generateOptions(data, programOptions)
-    pprint({"AvailiableCourses":flatten(electives), "Plan":userPlan.get_return()})
-    return {"AvailiableCourses":flatten(electives), "Plan":userPlan.get_return()}
+    pprint({"AvailiableCourses":electives, "Plan":userPlan.get_return()})
+    return {"AvailiableCourses":electives, "Plan":userPlan.get_return()}
      
 
 if __name__ == "__main__":
