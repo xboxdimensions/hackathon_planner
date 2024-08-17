@@ -14,15 +14,17 @@
     $ . .venv/bin/activate
     ```
 
-3. Install Flask:
+3. Install Flask/Requests:
 
     ```bash
-    $ pip install Flask
+	$ cd FlaskApp
+    $ pip install -r requirements.txt
     ```
 
 4. Run the Flask project:
 
     ```bash
+    $ cd FlaskApp
     $ flask run
     ```
 
