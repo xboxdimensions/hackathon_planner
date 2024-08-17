@@ -7,15 +7,24 @@ BLANK = 'XXXX0000'
 SEMESTERS = 2
 
 class Plan:
-	def __init__(self, years: int = 4, courseLoad: int = 4) -> None:
+	def __init__(self, startingYear: int = 2024, courseLoad: int = 4) -> None:
 		"""Initializes Blank plan
 		"""
-		self._years = years
+		self._start = startingYear
+		self._years = years =  4 # DEFAULT TO 4 YEARS # TODO
 		self._data = {n : ([BLANK]*courseLoad, [BLANK]*courseLoad) for n in range(1, years+1)}
 		# TODO replace blanks with sets and just no blank
 		self._options = {"required" : set(), "majorElectives" : []}
 
-		self._courses = set() # QUICK WAY OF CHECKING IF USER IS TAKING COURSE
+		self._courses = set() 
+
+	def get_return(self) -> dict:
+		"""Returns the plan in dictionary format as required for html"""
+		out = dict()
+		for year, sems in self._data.items():
+			out[self._start + year - 1] = sems
+		return out
+
 
 	def add_completed(self, course: str):
 		"""Used for user already completed that are not on the plan"""

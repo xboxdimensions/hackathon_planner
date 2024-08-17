@@ -11,7 +11,6 @@ num = [1602, 2000, 2007, 2031, 2033, 2040, 2041, 2052, 2063, 2066, 2102, 2129, 2
 
 # FUNCTION 1) GIVE programCode - return (courses, plans)
 
-
 def course_finder(program_code: int) -> tuple[dict, dict]:
     courses = {}
     plans = {}
@@ -44,7 +43,6 @@ def course_finder(program_code: int) -> tuple[dict, dict]:
     return (courses, plans)
 
 # FUNCTION 2) input plans (see above) return courses (like above)
-
 
 def plan_finder(planCode: str) -> dict[str]:
     courses = {}
@@ -81,7 +79,6 @@ def courseData(courses: dict) -> dict:
             courses[courseCode][header] = sidebar(text, filter)
 
     return courses
-
 
 def getNames(num: list[int]) -> dict[str:int]:
     with open("courseNames.json", "w") as f:
