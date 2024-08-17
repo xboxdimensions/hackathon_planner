@@ -1,13 +1,19 @@
 """Plan class"""
 from GenerationComponent.semesterIterator import semIter
 from GenerationComponent.prerequisites import SEM_INFO
-from Scaper.courseData import preqs as prerequisites
+from Scaper.course_scraper import courseData as cD
 
+def pre_off(code):
+	data = cD([code])
+	return (data[code]['Prerequisite'], data[code]['Offerings'])
 
+prerequisites = lambda code : pre_off(code)[0]
+offerrings = lambda code : pre_off(code)[1]
 BLANK = 'XXXX0000'
 SEMESTERS = 2
 
 class Plan:
+	DATA = {}
 	def __init__(self, startingYear: int = 2024, courseLoad: int = 4) -> None:
 		"""Initializes Blank plan
 		"""
@@ -57,7 +63,12 @@ class Plan:
 		if course in self._courses:
 			return 0 # common occurance dont print anything
 		# print("Adding course", course, "to", year, semester)
-		if (year < 1 or year > self._years or semester not in {1, 2}): # Validation Checking
+		if course not in Plan.DATA:
+			pr, os = pre_off(course)
+			Plan.DATA[course] = (pr, os)
+		else:
+			os = Plan.DATA[course][1]
+		if (year < 1 or year > self._years or semester not in os): # Validation Checking
 			print(f"Could not add course. Year {year}, Semester {semester} is invalid.")
 			return 1
 
@@ -96,7 +107,13 @@ class Plan:
 
 		# First recurislvey add the prerequisites and their prereqs etc
 		hy, hs = 1, 1 # highest year and semester
-		ps = prerequisites(course).copy()
+		ps = []
+		if isinstance(prerequisites, list):
+			if course not in Plan.DATA:
+				ps, os = pre_off(course)
+				Plan.DATA[course] = (ps, os)
+			else:
+				ps = Plan.DATA[course]
 		for prereq in ps:
 			if isinstance(prereq, list):
 				# There is a choice one or the other
