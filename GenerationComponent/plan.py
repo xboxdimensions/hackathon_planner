@@ -55,7 +55,6 @@ class Plan:
 
 		DOES NOT CHECK FOR PREREQUISITES THIS IS DONE BEFORE CALLING THIS!!
 
-		TODO CHECK IF COURSE IS AVAILIABLE THIS SEMESTER
 		
 		0 = Successful addition, 1 = bad year, -1 = no spots
 		
@@ -70,9 +69,7 @@ class Plan:
 			os = Plan.DATA[course][1]
 		if (year < 1 or year > self._years or semester not in os): # Validation Checking
 			print(f"Could not add course. Year {year}, Semester {semester} is invalid.")
-			return 1
-
-		# TODO SEMESTER OFFERRINGS 
+			return 1 
 
 		# Going through and adding course as first blank spot
 		for spot in self._data[year][semester-1]:
@@ -103,23 +100,20 @@ class Plan:
 				return
 			course = course[0] # take the first option as default
 		if course in self._courses:
-			return
+			return # wtf is the point
 
 		# First recurislvey add the prerequisites and their prereqs etc
 		hy, hs = 1, 1 # highest year and semester
 		ps = []
-		if isinstance(prerequisites, list):
-			if course not in Plan.DATA:
-				ps, os = pre_off(course)
-				Plan.DATA[course] = (ps, os)
-			else:
-				ps = Plan.DATA[course]
+		if course not in Plan.DATA:
+			ps, os = pre_off(course)
+			Plan.DATA[course] = (ps, os)
+		else:
+			ps = Plan.DATA[course]
 		for prereq in ps:
-			if isinstance(prereq, list):
+			if isinstance(prereq, list) or isinstance(prereq, tuple):
 				# There is a choice one or the other
 				self.add_required_choice(prereq)
-				if len(prereq) > 2:
-					continue # TODO IDK WTF THIS MEANS
 				# choose the first one for now # TODO
 				prereq = prereq[0]
 			elif prereq not in self._courses:
