@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 
 DEVELOPMENT_ENV = True
 
@@ -12,8 +12,15 @@ COURSES = {2024: [("MATH1061", "Maths and Stuff"), ("MATh1072", "Worse Maths and
 YEARS = range(2024, 2028)
 @app.route("/")
 def index():
-    return render_template("index.html", years=YEARS, courses = COURSES)
+    return render_template("index_copy.html", years=YEARS, courses = COURSES)
 
+
+@app.route("/api", methods=["POST"])
+def generate():
+    if request.method == "POST":
+        # request.form.get
+        print(request.form)
+    return redirect(url_for('.index', data=request.form))
 
 if __name__ == "__main__":
     app.run(debug=DEVELOPMENT_ENV)
