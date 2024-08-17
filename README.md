@@ -24,7 +24,6 @@
 4. Run the Flask project:
 
     ```bash
-    $ cd FlaskApp
     $ flask run
     ```
 
