@@ -18,8 +18,8 @@ class Plan:
 
 		self._courses = set() 
 
-	def get_extra(self) -> list[str]:
-		return self._options['error']
+	def get_extra(self, key: str = 'error') -> list[str]:
+		return self._options[key]
 
 	def get_return(self) -> dict:
 		"""Returns the plan in dictionary format as required for html"""
@@ -119,8 +119,8 @@ class Plan:
 		code = self._add(course, s.year, s.sem)
 		while code == -1:
 			if s.year > 10:
-				
-				self._options['error'].append(course)
+				if course not in self._courses:
+					self._options['error'].append(course)
 				break # ERROR
 			next(s)
 			self._add(course, s.year, s.sem)

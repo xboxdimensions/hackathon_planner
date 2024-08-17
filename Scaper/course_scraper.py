@@ -75,7 +75,7 @@ def scrapePlansAndCore(program_code: str) -> dict:
 					# a choice
 					tab_courses.add(set(choice for choice in course['equivalenceGroup']))
 				else:
-					pprint(course)
+					# todo
 					pass # RANDOM ELECTIVES TODO
 		if i == 0:
 			data['core'] = tab_courses
