@@ -38,7 +38,7 @@ def generate():
     required = courses[0]
     electives = courses[1:]
     programOptions = {"Required": required, "ProgramElectives":electives}
-    pprint(programOptions)
+    # pprint(programOptions)
     # print(programOptions["Required"])
     
     #

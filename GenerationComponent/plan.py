@@ -115,7 +115,6 @@ class Plan:
 			next(s)
 		code = self._add(course, s.year, s.sem)
 		while code == -1:
-			print(s.year, code)
 			if s.year > 10:
 				print(course, "ERRORR ERRROR ERA")
 				break # ERROR

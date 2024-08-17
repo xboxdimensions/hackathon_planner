@@ -37,7 +37,6 @@ def generateOptions(UserOptions={}, ProgramOptions={}):
 	# 		continue
 	for course in requirements:
 		plan.add_course(course)
-		print("adding", course)
 	return plan
 
 
