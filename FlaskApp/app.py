@@ -8,10 +8,6 @@ DEVELOPMENT_ENV = True
 
 app = Flask(__name__)
 
-data = {"test" : 1}
-
-
-COURSES = {2024: [("MATH1061", "Maths and Stuff"), ("MATh1072", "Worse Maths and stuff")], 2025: [], 2026: [], 2027: []}
 
 @app.route("/")
 def index():
@@ -40,6 +36,9 @@ def generate():
     
     programOptions = {"Required":[], "ProgramElectives":[]}
     # ask will for this ^^^ 
+    courses, plans = course_finder(data['ProgramCode'])
+    print(courses, plans)
+    print(list(courses.keys()))
     
     #
     userPlan = generateOptions(data, programOptions)
