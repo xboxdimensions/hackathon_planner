@@ -136,20 +136,20 @@
 			cursor: pointer;
 		}
 	
-		#relevant, #availiable {
+		#relevant, #Elective {
 			background-color: #fff;
 			border-radius: 8px;
 			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 			color: #333;
 			padding: 10px;
 			margin-bottom: 20px;
-			max-height: 70vh; /* Set maximum height for scroll */
+			max-height: 35vh; /* Set maximum height for scroll */
 			overflow-y: scroll; /* Always show vertical scroll */
 			overflow-x: hidden;
 			text-align: center;
 		}
 	
-		#relevant h2, #availiable h2 {
+		#relevant h2, #Elective h2 {
 			color: #4b0082;
 			margin-top: 0;
 			margin-bottom: 10px;
@@ -189,6 +189,10 @@
 		.choice {
 			border-radius: 0;
 			background-color:rgb(243, 141, 74);
+		}
+
+		.elective {
+			background-color: lightblue;
 		}
 
         .course.dragging {
@@ -261,7 +265,7 @@
 			
 
 			<!-- Available Courses -->
-			<div id="availiable" ondrop="drop(event)" ondragover="allowDrop(event)">
+			<div id="Elective" ondrop="drop(event)" ondragover="allowDrop(event)">
 				<h2>Available Courses</h2>
 				
 			</div>
@@ -385,9 +389,9 @@
 
 	
 
-		if (semester.id === 'semester1' && semester.querySelectorAll('.course').length >= 4) {
+		if (semester.id === 'semester0' && semester.querySelectorAll('.course').length >= 4) {
 			alert('You cannot have more than 4 courses in the first semester of the first year.');
-		} else if (semester.querySelectorAll('.course').length >= 5) {
+		} else if (semester.id != 'Elective' && semester.id != 'relevant' && semester.querySelectorAll('.course').length >= 5) {
 			alert('You cannot have more than 5 courses in a semester.');
 		} else {
 			 // otherwise we are doing CHECKS and adding to semester 
@@ -442,24 +446,29 @@ document.getElementById("courseSelect").innerHTML += `<option value="${courseCod
 	.then(response => response.json())
 	.then(data => {
 		// Clear all children before appending new courses
-		document.getElementById("availiable").innerHTML = "<h2>Available Courses</h2>"; // clearing Availiable courses
+		document.getElementById("Elective").innerHTML = "<h2>Available Elective Courses</h2>"; // clearing Core courses
 		document.getElementById("relevant").innerHTML = "<h2>Core Course Choices</h2>";
-		for (const Avcourse in data.AvailiableCourses) {
-			if (data.AvailiableCourses[Avcourse].length == 1){
+		
+		
+
+			// for all the core courses
+		for (const Avcourse in data.CoreCourses) {
+			if (data.CoreCourses[Avcourse].length == 1){
 				// <div class="course" id="CSSE2001" draggable="true">CSSE2001</div>
 				const newCourse = document.createElement('div');
 			newCourse.classList.add('course');
-			newCourse.textContent = data.AvailiableCourses[Avcourse];
+			newCourse.textContent = data.CoreCourses[Avcourse];
 			newCourse.id = newCourse.textContent;
 			newCourse.draggable = true;
 			newCourse.addEventListener('dragstart', drag);
 			newCourse.addEventListener('dragend', function() {
 				this.classList.remove('dragging');
 			});
-			// Append the new course to the availiable courses
-			document.getElementById("availiable").appendChild(newCourse);
+			// Append the new course to the Core courses
+			document.getElementById("relevant").appendChild(newCourse);
 			}
 			else {
+				// otherwise the choosing things a or b stat1201 or stat1301
 				const newD = document.createElement('div');
 					newD.classList.add("course");
 					newD.classList.add("choice");
@@ -472,9 +481,9 @@ document.getElementById("courseSelect").innerHTML += `<option value="${courseCod
 					let rel = document.getElementById("relevant");
 					rel.appendChild(newD);
 					newD.appendChild(newS);
-				for (const optn in data.AvailiableCourses[Avcourse]) {
-					let oCode = data.AvailiableCourses[Avcourse][optn];
-					//  data.AvailiableCourses[Avcourse]
+				for (const optn in data.CoreCourses[Avcourse]) {
+					let oCode = data.CoreCourses[Avcourse][optn];
+					//  data.CoreCourses[Avcourse]
 					// <div class="course choice" id="CHOICE1" draggable=""><select onchange="makeChoice(this)"><option value="CSSE1001">CSSE1001</option>
 					// <option value="ENGI1100">ENGI1100</option></select></div>
 					let opt = document.createElement('option');
@@ -485,7 +494,24 @@ document.getElementById("courseSelect").innerHTML += `<option value="${courseCod
 			}
 		}
 
+		// for all the electives
+		const elecDiv = document.getElementById("Elective");
+		elecDiv.innerHTML = "<h2>Available Elective Courses</h2>";
 
+		for (const Elec in data.electives) {
+			// <div class="course core" draggable="true" id="CSSE2010">CSSE2010</div>
+			let newDrag = document.createElement('div');
+			newDrag.classList.add("course");
+			newDrag.classList.add("elective");
+			newDrag.draggable = "true";
+			newDrag.id = data.electives[Elec];
+			newDrag.innerHTML = newDrag.id;
+			newDrag.addEventListener('dragstart', drag);
+			newDrag.addEventListener('dragend', function() {
+				this.classList.remove('dragging');
+			});
+			elecDiv.appendChild(newDrag);
+		}
 		int = 0;
 		for (year in (data.Plan)){
 			for (semester in data.Plan[year]){

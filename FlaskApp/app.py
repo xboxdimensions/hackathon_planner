@@ -35,7 +35,7 @@ def generate():
 
     # Get the program options & data
     info = scrapePlansAndCore(data['ProgramCode'])
-    print(info)
+    pprint(info)
     required = info['core']
     electives = info['electives']
     programOptions = {"Required": required, "ProgramElectives":electives}
@@ -44,7 +44,7 @@ def generate():
     
     #
     userPlan = generateOptions(data, programOptions)
-    rtrn = {"AvailiableCourses":electives+userPlan.get_extra('required'), "Plan":userPlan.get_return()}
+    rtrn = {"electives":electives,"CoreCourses":userPlan.get_extra('required'), "Plan":userPlan.get_return()}
     print(rtrn)
     return rtrn
      
