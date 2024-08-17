@@ -1,6 +1,6 @@
 """Plan class"""
-from semesterIterator import semIter
-from prerequisites import prerequisites, SEM_INFO
+from GenerationComponent.semesterIterator import semIter
+from GenerationComponent.prerequisites import prerequisites, SEM_INFO
 
 
 BLANK = 'XXXX0000'

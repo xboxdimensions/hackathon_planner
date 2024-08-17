@@ -2,7 +2,7 @@
 
 Responsible for connecting the differrent modules/sub components"""
 
-from plan import Plan
+from GenerationComponent.plan import Plan
 from pprint import pprint
 
 USER_OPTIONS = {"ProgramLength" : 3, # years
