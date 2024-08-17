@@ -1,6 +1,6 @@
 import requests
 import json
-from courseData import relatedCourses, sidebar, UnitAmount, durationLength, offerings
+from Scaper.courseData import relatedCourses, sidebar, UnitAmount, durationLength, offerings
 headers = requests.utils.default_headers()
 headers.update(
     {
