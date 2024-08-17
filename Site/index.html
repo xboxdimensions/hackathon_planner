@@ -97,7 +97,14 @@
         <label for="Course">Course:</label>
         <select id="courseSelect">
             <option value="">Select a Course</option>
-          </select>
+        </select>
+        <label for="laod">Load:</label>
+        <select id="laod">
+            <option value="select">Select a load</option>
+            <option value="part">Full time</option>
+            <option value="Full">Part time</option>
+        </select>
+        <button id="submit">Submit</button>
     </div>
 
     <div class="semesters">
@@ -118,6 +125,30 @@
         <div class="semester" id="semester2-4" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
         <div class="semester" id="semester3-4" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
         <h2>2028</h2>
+        <div class="semester" id="semester1-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-5" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <h2>2029</h2>
+        <div class="semester" id="semester1-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-5" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <h2>2030</h2>
+        <div class="semester" id="semester1-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-5" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <h2>2031</h2>
+        <div class="semester" id="semester1-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-5" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <h2>2032</h2>
+        <div class="semester" id="semester1-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-5" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <h2>2033</h2>
+        <div class="semester" id="semester1-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
+        <div class="semester" id="semester2-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3-5" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
+        <h2>2034</h2>
         <div class="semester" id="semester1-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
         <div class="semester" id="semester2-5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
         <div class="semester" id="semester3-5" ondrop="drop(event)" ondragover="allowDrop(event)">Summer</div>
@@ -306,8 +337,8 @@ document.getElementById("courseSelect").innerHTML += `<option value="${courseCod
 
 // Add event listener to the select element to get the selected course code
 document.getElementById('courseSelect').addEventListener('change', function() {
-    const courseCode = this.value;
-    console.log(courseCode);
+    const ProgramCode = this.value;
+    console.log(ProgramCode);
 
     // Make a fetch request to the server-side API endpoint
     const response = fetch('http://127.0.0.1:5000/api', {
@@ -315,7 +346,10 @@ document.getElementById('courseSelect').addEventListener('change', function() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({courseCode})
+        
+        bbody: JSON.stringify({ProgramCode: ProgramCode, 
+            startingYear: getElementById('starting-year').value,
+        Load: getElementById('laod').value})
     })
     .then(response => response.json())
     .then(data => {})
