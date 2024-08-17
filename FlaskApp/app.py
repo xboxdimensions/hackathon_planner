@@ -39,6 +39,7 @@ def generate():
     courses, plans = course_finder(data['ProgramCode'])
     print(courses, plans)
     print(list(courses.keys()))
+    print(courses)
     
     #
     userPlan = generateOptions(data, programOptions)
