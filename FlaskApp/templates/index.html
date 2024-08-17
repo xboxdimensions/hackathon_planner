@@ -10,6 +10,14 @@
             background-color: purple;
             margin: 20px;
         }
+
+        .required {
+            background-color: purple;
+        }
+        .optional {
+            background-color: black;
+        }
+
         .container {
             display: flex;
             justify-content: space-between;
@@ -45,6 +53,7 @@
             cursor: grab; 
         }
         
+
 
         .course, .semester {
             transition: transform 0.3s ease;
@@ -349,15 +358,15 @@ document.getElementById('courseSelect').addEventListener('change', function() {
             if (data.AvailiableCourses[Avcourse].length < 9){
                 const newCourse = document.createElement('div');
             newCourse.classList.add('course');
+            newCourse.classList.add('optional');
             newCourse.textContent = data.AvailiableCourses[Avcourse];
             newCourse.id = newCourse.textContent;
             newCourse.draggable = true;
-            newCourse.style.backgroundColor = 'black';
             newCourse.addEventListener('dragstart', drag);
             newCourse.addEventListener('dragend', function() {
                 this.classList.remove('dragging');
             });
-            // Append the new course to the semester
+            // Append the new course to the availiable courses
             document.getElementById("cou").appendChild(newCourse);
             }
         }
@@ -370,6 +379,7 @@ document.getElementById('courseSelect').addEventListener('change', function() {
                 for(course in data.Plan[year][semester]){
                     const newCourse = document.createElement('div');
                     newCourse.classList.add('course');
+                    newCourse.classList.add('required')
                     newCourse.draggable = true;
                     newCourse.id =  data.Plan[year][semester][course];
                     newCourse.textContent = data.Plan[year][semester][course];

@@ -42,8 +42,8 @@ def generate():
     
     #
     userPlan = generateOptions(data, programOptions)
-    pprint({"AvailiableCourses":electives, "Plan":userPlan.get_return()})
-    return {"AvailiableCourses":electives, "Plan":userPlan.get_return()}
+    print(userPlan.get_extra())
+    return {"AvailiableCourses":electives+userPlan.get_extra(), "Plan":userPlan.get_return()}
      
 
 if __name__ == "__main__":

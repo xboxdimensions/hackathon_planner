@@ -14,9 +14,12 @@ class Plan:
 		self._years = years =  4 # DEFAULT TO 4 YEARS # TODO
 		self._data = {n : ([BLANK]*courseLoad, [BLANK]*courseLoad) for n in range(1, years+1)}
 		# TODO replace blanks with sets and just no blank
-		self._options = {"required" : [], "majorElectives" : []}
+		self._options = {"required" : [], "majorElectives" : [], "error": []}
 
 		self._courses = set() 
+
+	def get_extra(self) -> list[str]:
+		return self._options['error']
 
 	def get_return(self) -> dict:
 		"""Returns the plan in dictionary format as required for html"""
@@ -116,7 +119,8 @@ class Plan:
 		code = self._add(course, s.year, s.sem)
 		while code == -1:
 			if s.year > 10:
-				print(course, "ERRORR ERRROR ERA")
+				
+				self._options['error'].append(course)
 				break # ERROR
 			next(s)
 			self._add(course, s.year, s.sem)
