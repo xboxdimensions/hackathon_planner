@@ -20,10 +20,7 @@ class Plan:
 
 	def get_return(self) -> dict:
 		"""Returns the plan in dictionary format as required for html"""
-		out = dict()
-		for year, sems in self._data.items():
-			out[self._start + year - 1] = sems
-		return out
+		return {self._start + year - 1 : [[course for course in sem if course != BLANK] for sem in sems] for year, sems in self._data.items()}
 
 
 	def add_completed(self, course: str):
