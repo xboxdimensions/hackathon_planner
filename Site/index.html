@@ -338,21 +338,22 @@ document.getElementById("courseSelect").innerHTML += `<option value="${courseCod
 // Add event listener to the select element to get the selected course code
 document.getElementById('courseSelect').addEventListener('change', function() {
     const ProgramCode = this.value;
-    console.log(ProgramCode);
 
     // Make a fetch request to the server-side API endpoint
-    const response = fetch('http://127.0.0.1:5000/api', {
+    const response = fetch('/api', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         
-        bbody: JSON.stringify({ProgramCode: ProgramCode, 
-            startingYear: getElementById('starting-year').value,
-        Load: getElementById('laod').value})
+        body: JSON.stringify({ProgramCode: ProgramCode, 
+            startingYear: document.getElementById('starting-year').value,
+        Load: document.getElementById('laod').value})
     })
     .then(response => response.json())
-    .then(data => {})
+    .then(data => {console.log(data)
+
+    })
     .catch((error) => {
         console.error('Error:', error);
     });
