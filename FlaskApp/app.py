@@ -56,7 +56,7 @@ rules = {'MATH1040': {'Name': 'Mathematical Foundations I', 'Offerings': ['Semes
 
 # returns true if no incompabilities occur in current sem or previous ones
 
-lists = request.get_json()['list']
+# lists = request.get_json()['list']
 def check_no(value, sem):
     for check in lists[:sem]:
         if set(rules[value]['Incompatible']).isdisjoint(set(check)):
