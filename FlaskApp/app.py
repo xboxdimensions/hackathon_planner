@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for
 
 import sys, os
+from pprint import pprint
 sys.path.insert(0, os.path.abspath('../'))
 from GenerationComponent.generate import generateOptions
-from Scaper.course_scraper import course_finder
+from Scaper.separated_tabs import seperatedTabs
 DEVELOPMENT_ENV = True
 
 app = Flask(__name__)
@@ -30,20 +31,16 @@ def generate():
     }
     """
     data = request.get_json()
-    print(data)
 
     # Get the program options & data
     
-    programOptions = {"Required":[], "ProgramElectives":[]}
-    # ask will for this ^^^ 
-    courses, plans = course_finder(data['ProgramCode'])
-    print(courses, plans)
-    print(list(courses.keys()))
-    print(courses)
+    seperatedTabs(data['ProgramCode']) 
+    programOptions = {"Required": ['CSSE1001'], "ProgramElectives":[]}
+    # print(programOptions["Required"])
     
     #
     userPlan = generateOptions(data, programOptions)
-    print({"AvailiableCourses":["CSSE1001"], "Plan":userPlan.get_return()})
+    pprint({"AvailiableCourses":["CSSE1001"], "Plan":userPlan.get_return()})
     return {"AvailiableCourses":["CSSE1001"], "Plan":userPlan.get_return()}
      
 

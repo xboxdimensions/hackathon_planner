@@ -87,7 +87,7 @@ class Plan:
 		"""Adds a course to the first availiable spot taking into account
 		prerequisites
 		"""
-		if isinstance(course, tuple):
+		if isinstance(course, list):
 			self.add_required_choice(course) # THEY WILL HAVE TO CHOOSE
 			course = course[0] # take the first option as default
 		if course in self._courses:
@@ -97,7 +97,7 @@ class Plan:
 		hy, hs = 1, 1 # highest year and semester
 		ps = prerequisites(course).copy()
 		for prereq in ps:
-			if isinstance(prereq, tuple):
+			if isinstance(prereq, list):
 				# There is a choice one or the other
 				self.add_required_choice(prereq)
 				# choose the first one for now # TODO
