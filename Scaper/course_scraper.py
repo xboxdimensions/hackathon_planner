@@ -7,7 +7,6 @@ from pprint import pprint
 from bs4 import BeautifulSoup
 
 
-
 headers = requests.utils.default_headers()
 headers.update(
     {
@@ -34,81 +33,60 @@ getNames
 # FUNCTION 1) GIVE programCode - return (courses, plans)
 
 
-
-
 def scrapePlansAndCore(program_code: str) -> dict:
-    print(program_code)
     headers = requests.utils.default_headers()
-    headers.update({'User-Agent': 'My User Agent 1.0'})
-    url = f"https://my.uq.edu.au/programs-courses/requirements/program/{program_code}/2024"
+    headers.update(
+        {
+            'User-Agent': 'My User Agent 1.0',
+        }
+    )
+
+    url = f"https://my.uq.edu.au/programs-courses/requirements/program/{
+        program_code}/2024"
     html = requests.get(url, headers=headers).text
     out = html
     s = out
-
     out = out.split("programRequirements: ")[1]
     out = out.split(",\n routes: ")[0]
+
     j = json.loads(out)
     if not j:
         return dict()
-	# pprint(j['payload']['components'][1]['payload'])
-	# out = json.loads(out)
-    # with open("output.txt", "w") as f:
-    #     json.dump(j['payload']['components'][1]['payload'], f)
+    # pprint(j['payload']['components'][1]['payload'])
+    # out = json.loads(out)
+    with open("output.txt", "w") as f:
+        json.dump(j['payload']['components'][1]['payload'], f)
 
     payload = j['payload']['components'][1]['payload']['body']
     content = [tab['body'] for tab in payload]
 
     data = {'core': set(), 'electives': set(), 'plans': set()}
     for i, tab in enumerate(content):
-        if len(tab) > 1:
-            if 'body' in tab[1]:
-                # there are sub sub sections
-                tab = tab[0]['body']
         tab_courses = set()
         if tab:
-
             for course in tab:
-                print("------")
-                print(course)
-                print("------")
-                if 'rowType' not in course:
-                    # print(course)
-                    continue
-                # print(course)
-                # print()
-                # print(course['rowType']) #, course['name'])
-                # try:
-                #     print(course['equivalenceGroup'])
-                #     print(course['rowType'] == "EquivalenceGroup")
-                # except:
-                #     pass
-                if course['rowType'] == "CurriculumReference":
+                if 'curriculumReference' in course:
                     # a single course
-                    # print(course['curriculumReference']['code'])
-                    print("=" * 10)
-                    print(course['curriculumReference']['code'])
-                    print("=" * 10)
                     tab_courses.add(course['curriculumReference']['code'])
-                elif course['rowType'] == "EquivalenceGroup":
+                elif 'equivalenceGoup' in course:
                     # a choice
-                    tab_courses.add(tuple(choice['curriculumReference']['code'] for choice in course['equivalenceGroup']))
+                    tab_courses.add(
+                        set(choice for choice in course['equivalenceGroup']))
                 else:
-                    pass # wild card items
-        print(tab_courses)
+                    pprint(course)
+                    pass  # RANDOM ELECTIVES TODO
         if i == 0:
             data['core'] = tab_courses
         if tab_courses and len(list(tab_courses)[0]) == 10:
             data['plans'] = tab_courses
-        elif tab_courses:
-            for course in tab_courses:
-                if course not in data['core'] and len(course) == 8:
-                    data['electives'].add(course)
-    print(data['electives'])           
-    return {key : list(s) for key, s in data.items()}
+        else:
+            data['electives'].union(tab_courses)
+
+    return {key: list(s) for key, s in data.items()}
 # def course_finder(program_code: int) -> tuple[dict, dict]:
 #     """
 #     Gets basic course information in one lookup
-    
+
 #     Takes in a program_code returns two dictionaries
 #     """
 #     courses = dict()
@@ -117,32 +95,22 @@ def scrapePlansAndCore(program_code: str) -> dict:
 #     # Go to course requirements page
 #     url = f"https://my.uq.edu.au/programs-courses/requirements/program/{
 #         program_code}/2024"
-#     html = requests.get(url, headers=headers).text
-
-#     code = html.split('"code":')[1:] # gets all json information we want ish
-#     code = code.split(",\n routes:")[0]
-    
-
-#     for t in codes:
-#         if t[5:9].isdigit():
-#             index = t.find('fromTerm')-3
-#             # end = t.find('",', index)
-#             i = t.find(',"name":"')+9
-#             courses[t[1:9]] = {}
-#         elif all([t[1:7].isalpha(), t[7:11].isdigit(), t[1:11] not in plans]):
-#             # CODE : {TYPE, }
-#             code = t[1:11]
-#             rangeS = t.find('"subtype":"')+11
-#             rangeE = t.find('","fromYear')
-#             subtype = t[rangeS:rangeE]
-#             t = t[rangeE:]
-#             rangeS = t.find('"name":"')+8
-#             rangeE = t.find('","fromTerm')
-#             name = t[rangeS:rangeE]
-#             plans[code] = {}
-#             plans[code]["Name"] = name
-#             plans[code]["subtype"] = subtype
-#     return (courses, plans)
+    # response = requests.get(url, headers=headers)
+    # text = response.text
+    # text = str(text)
+    # delimter = text.split('"')
+    # last_key = None
+    # for index, text in enumerate(delimter):
+    #     if text[0:4].isalpha() and text[5:9].isdigit():
+    #         courses[text] = {}
+    #     if text[0:6].isalpha() and text[6:11].isdigit():
+    #         plans[text] = {}
+    #         last_key = text
+    #     if delimter[index-2] == "name" and delimter[index-1] == ":" and last_key != None:
+    #         plans[last_key]["Name"] = text
+    #         last_key = None
+    #     if delimter[index-2] == "subtype" and delimter[index-1] == ":" and last_key != None:
+    #         plans[last_key]["Subtype"] = text
 
 # FUNCTION 2) input plans (see above) return courses (like above)
 
