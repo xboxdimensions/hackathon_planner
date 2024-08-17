@@ -306,6 +306,8 @@
 ////////////////////////////////////////////////////////////
 	// populating the select year
    
+
+	let lists = [[], [], [], [], [], [], [],[] , [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
 	let dateDropdown = document.getElementById('startingYear');
 	let planDiv = document.getElementsByClassName("semesters")[0];
 
@@ -333,7 +335,6 @@
 	}
 	
 	
-
 	let sem1Div = document.createElement('div');
 	let sem2Div = document.createElement('div');
 
@@ -405,24 +406,31 @@
 		event.preventDefault();
 		event.currentTarget.classList.remove('over');
 	}
-
 	function drop(event) {
 		event.preventDefault();
 		const data = event.dataTransfer.getData('text'); // text of the box being dragged/id
 		const course = document.getElementById(data); // the course box being dragged
 		const semester = event.currentTarget; // the place we drop to
-
-	
+		console.log(course.innerText.toString)
 
 		if (semester.id === 'semester0' && semester.querySelectorAll('.course').length >= 4) {
 			alert('You cannot have more than 4 courses in the first semester of the first year.');
 		} else if (semester.id != 'Elective' && semester.id != 'relevant' && semester.querySelectorAll('.course').length >= 5) {
 			alert('You cannot have more than 5 courses in a semester.');
 		} else {
-			 // otherwise we are doing CHECKS and adding to semester 
-			 semester.appendChild(course);
+			 // otherwise we are doing CHECKS and adding to semester
+			const response = fetch('http://127.0.0.1:5000/check', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+				},
 				
-			}
+				body: JSON.stringify({value : course.innerText, place : semester.id , list : lists})
+			})
+			.then(data => {console.log(data); semester.appendChild(course)})
+			 
+			.then(response => response.json())
+		}
 		
 		semester.classList.remove('over');
 		course.classList.remove('dragging');
@@ -535,6 +543,7 @@ document.getElementById("courseSelect").innerHTML += `<option value="${courseCod
 			newDrag.addEventListener('dragend', function() {
 				this.classList.remove('dragging');
 			});
+
 			elecDiv.appendChild(newDrag);
 		}
 		int = 0;
