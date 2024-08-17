@@ -14,7 +14,7 @@ class Plan:
 		self._years = years =  4 # DEFAULT TO 4 YEARS # TODO
 		self._data = {n : ([BLANK]*courseLoad, [BLANK]*courseLoad) for n in range(1, years+1)}
 		# TODO replace blanks with sets and just no blank
-		self._options = {"required" : set(), "majorElectives" : []}
+		self._options = {"required" : [], "majorElectives" : []}
 
 		self._courses = set() 
 
@@ -25,16 +25,15 @@ class Plan:
 
 	def add_completed(self, course: str):
 		"""Used for user already completed that are not on the plan"""
-		print("added", course)
 		self._courses.add(course)
 
-	def add_required_choice(self, course: tuple):
+	def add_required_choice(self, course: list):
 		"""Adds a required choice in the plan, this needs to be dealt
 		with until the plan can be finalised.
 		
 		# TODO make it so that there are spaces left for these requirements
 		"""
-		self._options["required"].add(course)
+		self._options["required"].append(course)
 
 
 	def get_length(self) -> int:
@@ -51,7 +50,6 @@ class Plan:
 		0 = Successful addition, 1 = bad year, -1 = no spots
 		
 		"""
-		
 		if course in self._courses:
 			return 0 # common occurance dont print anything
 		# print("Adding course", course, "to", year, semester)
@@ -84,8 +82,10 @@ class Plan:
 		"""Adds a course to the first availiable spot taking into account
 		prerequisites
 		"""
-		if isinstance(course, list):
+		if isinstance(course, list) or isinstance(course, tuple):
 			self.add_required_choice(course) # THEY WILL HAVE TO CHOOSE
+			if not course or len(course) > 2:
+				return
 			course = course[0] # take the first option as default
 		if course in self._courses:
 			return
@@ -97,6 +97,8 @@ class Plan:
 			if isinstance(prereq, list):
 				# There is a choice one or the other
 				self.add_required_choice(prereq)
+				if len(prereq) > 2:
+					continue # TODO IDK WTF THIS MEANS
 				# choose the first one for now # TODO
 				prereq = prereq[0]
 			elif prereq not in self._courses:
@@ -112,9 +114,10 @@ class Plan:
 		if ps:
 			next(s)
 		code = self._add(course, s.year, s.sem)
-		print("adding ", course)
 		while code == -1:
-			print(s.year, code)
+			if s.year > 10:
+				print(course, "ERRORR ERRROR ERA")
+				break # ERROR
 			next(s)
 			self._add(course, s.year, s.sem)
 

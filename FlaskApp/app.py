@@ -34,13 +34,16 @@ def generate():
 
     # Get the program options & data
     
-    seperatedTabs(data['ProgramCode']) 
-    programOptions = {"Required": ['CSSE1001'], "ProgramElectives":[]}
+    courses = seperatedTabs(data['ProgramCode'])
+    required = courses[0]
+    electives = courses[1:]
+    programOptions = {"Required": required, "ProgramElectives":electives}
+    # pprint(programOptions)
     # print(programOptions["Required"])
     
     #
     userPlan = generateOptions(data, programOptions)
-    pprint({"AvailiableCourses":["CSSE1001"], "Plan":userPlan.get_return()})
+    pprint({"AvailiableCourses":electives, "Plan":userPlan.get_return()})
     return {"AvailiableCourses":["CSSE1001"], "Plan":userPlan.get_return()}
      
 
