@@ -109,20 +109,20 @@
 
     <div class="semesters">
         <h2>2024</h2>
-        <div class="semester" id="semester1" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
-        <div class="semester" id="semester2" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester1" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 1</div>
+        <div class="semester" id="semester2" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 2</div>
         <h2>2025</h2>
-        <div class="semester" id="semester3" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
-        <div class="semester" id="semester4" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester3" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 1</div>
+        <div class="semester" id="semester4" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 2</div>
         <h2>2026</h2>
-        <div class="semester" id="semester5" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
-        <div class="semester" id="semester6" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester5" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 1</div>
+        <div class="semester" id="semester6" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 2</div>
         <h2>2027</h2>
-        <div class="semester" id="semester7" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
-        <div class="semester" id="semester8" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester7" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 1</div>
+        <div class="semester" id="semester8" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 2</div>
         <h2>2028</h2>
-        <div class="semester" id="semester9" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 1</div>
-        <div class="semester" id="semester10" ondrop="drop(event)" ondragover="allowDrop(event)">Semester 2</div>
+        <div class="semester" id="semester9" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 1</div>
+        <div class="semester" id="semester10" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 2</div>
     </div>
     <div class="courses">
         <h2>Available Courses</h2>
@@ -161,27 +161,36 @@
         event.currentTarget.classList.add('over');
     }
     
+    function dragLeave(event) {
+        
+        
+        event.preventDefault();
+        event.currentTarget.classList.remove('over');
+    }
+
     function drop(event) {
         event.preventDefault();
-        const data = event.dataTransfer.getData('text');
-        const course = document.getElementById(data);
-        const semester = event.currentTarget;
+        const data = event.dataTransfer.getData('text'); // text of the box
+        const course = document.getElementById(data); // the course box being dragged
+        const semester = event.currentTarget; // the place we drop to
 
-        if (semester.id == "cou"){
-            if (!semester.querySelector(`#${data}`)) {
-                semester.appendChild(course);
-            }
-        } else if (semester.id === 'semester1-1' && semester.querySelectorAll('.course').length >= 4) {
+    
+        if (semester.id == "cou") { // if we are dragging into the course list
+     
+            
+                semester.appendChild(course); // add to course list 
+            } else if (semester.id === 'semester1' && semester.querySelectorAll('.course').length >= 4) {
             alert('You cannot have more than 4 courses in the first semester of the first year.');
-        } else if (semester.id.includes('semester3') && semester.querySelectorAll('.course').length >= 3) {
-            alert('You cannot have more than 3 courses in the summer semester.');
         } else if (semester.querySelectorAll('.course').length >= 5) {
             alert('You cannot have more than 5 courses in a semester.');
         } else {
-            if (!semester.querySelector(`#${data}`)) {
-                semester.appendChild(course);
+             // otherwise we are doing CHECKS and adding to semester 
+       
+             semester.appendChild(course);
+               
+                
             }
-        }
+        
         semester.classList.remove('over');
         course.classList.remove('dragging');
     }
@@ -331,6 +340,7 @@ document.getElementById('courseSelect').addEventListener('change', function() {
             const newCourse = document.createElement('div');
             newCourse.classList.add('course');
             newCourse.textContent = data.AvailiableCourses[Avcourse];
+            newCourse.id = newCourse.textContent;
             newCourse.draggable = true;
             newCourse.addEventListener('dragstart', drag);
             newCourse.addEventListener('dragend', function() {
@@ -347,6 +357,8 @@ document.getElementById('courseSelect').addEventListener('change', function() {
                 for(course in data.Plan[year][semester]){
                     const newCourse = document.createElement('div');
                     newCourse.classList.add('course');
+                    newCourse.draggable = true;
+                    newCourse.id =  data.Plan[year][semester][course];
                     newCourse.textContent = data.Plan[year][semester][course];
                     newCourse.addEventListener('dragstart', drag);
                     newCourse.addEventListener('dragend', function() {
