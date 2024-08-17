@@ -1,5 +1,5 @@
 import requests
-from courseData import relatedCourses, sidebar, UnitAmount, durationLength, offerings, preqs, name
+from Scaper.courseData import relatedCourses, sidebar, UnitAmount, durationLength, offerings, preqs, name
 
 headers = requests.utils.default_headers()
 headers.update(
