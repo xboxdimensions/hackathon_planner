@@ -1,7 +1,34 @@
 relatedCourses = {'course-incompatible">': 'Incompatible',
-                  'course-prerequisite">': "Prerequisite",
                   'course-companion">': "Companion",
                   'recommended-prerequisite">': "RecommendPreq"}
+
+
+def name(text: str):
+    rangeS = text.find('<h1 id="course-title">')+22
+    text = text[rangeS:]
+    rangeE = text.find('</h1>')
+    text = text[:rangeE]
+    text = text.split(" ")
+    return " ".join(text[0:-1])
+
+
+def preqs(text: str):
+    coursesFound = []
+    rangeS = text.find('course-prerequisite">')+21
+    if rangeS == 20:
+        return coursesFound
+    text = text[rangeS:]
+    rangeE = text.find("</p>")
+    text = text[:rangeE]
+    if "grade" in text:
+        return ""
+
+    first = text.split(" and ")
+    for x in first:
+        x = x.removeprefix("(")
+        x = x.removesuffix(")")
+        coursesFound.append(tuple(x.split(" or ")))
+    return coursesFound
 
 
 def UnitAmount(text: str) -> str:
