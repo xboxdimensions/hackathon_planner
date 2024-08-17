@@ -5,10 +5,6 @@ Responsible for connecting the differrent modules/sub components"""
 from GenerationComponent.plan import Plan
 from pprint import pprint
 
-USER_OPTIONS = {"ProgramLength" : 3, # years
-				"CourseLoad" : 4, # courses / semester
-				"Completed" : ['CSSE1001', 'MATH1051']
-				}
 
 PROGRAM_OPTIONS = {"Required" : ['COMP2048', 'COMP3506', 'CSSE1001', 'CSSE2002',
 								 'CSSE2010', 'INFS1200', 'MATH1061', ('STAT1201', 'STAT1301')
@@ -29,7 +25,6 @@ def generateOptions(UserOptions={}, ProgramOptions={}):
 	# initial plan
 	load = 2 if UserOptions['Load'] == 'Part Time' else 4;
 	plan = Plan(int(UserOptions['startingYear']), load)
-
 	requirements = ProgramOptions["Required"].copy()
 
 	# Goes through the requirements trying to add each course to the first 
@@ -42,6 +37,7 @@ def generateOptions(UserOptions={}, ProgramOptions={}):
 	# 		continue
 	for course in requirements:
 		plan.add_course(course)
+		print("adding", course)
 	return plan
 
 
