@@ -13,23 +13,40 @@ def name(text: str):
 
 
 def preqs(text: str):
-    coursesFound = []
     rangeS = text.find('course-prerequisite">')+21
     if rangeS == 20:
-        return coursesFound
+        return set()
     text = text[rangeS:]
     rangeE = text.find("</p>")
     text = text[:rangeE]
     if "grade" in text:
         return ""
 
-    first = text.split(" and ")
-    for x in first:
-        x = x.removeprefix("(")
-        x = x.removesuffix(")")
-        coursesFound.append(tuple(x.split(" or ")))
-    return coursesFound
+    print( flatten(split(text.upper())))
+    return flatten(split(text.upper()))
 
+def flatten(S):
+    if not S:
+        return S
+    if isinstance(S[0], list):
+        return flatten(S[0]+ flatten(S[1:]))
+    return S[:1] + flatten(S[1:])
+
+def split(s: str) -> list:
+    if '(' in s or ')' in s:
+        s = ''.join(c for c in s if c not in '()')
+    if (" AND " in s) or (" OR " in s):
+        if 0 <= s.find(" AND ") <= s.find(" OR ") or s.find(" OR ") < 0:
+            sep = " AND "
+        else:
+            sep = " OR "
+        a, b = s.split(sep, maxsplit= 1)
+        
+        if sep == " AND ":
+            return [a, split(b)]
+        else:
+            return [(a, split(b))]
+    return s
 
 def UnitAmount(text: str) -> str:
     rangeS = text.find('course-units">')+14
