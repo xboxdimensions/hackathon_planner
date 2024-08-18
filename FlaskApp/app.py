@@ -108,6 +108,10 @@ def check():
     print(lists)
     return {"status": "OK" , "data": lists}
 
+@app.route("/create",methods=["POST"])
+def create():
+    data = request.get_json()
+    print(data)
 
 if __name__ == "__main__":
     app.run(debug=DEVELOPMENT_ENV)
