@@ -59,7 +59,7 @@ class Plan:
 		0 = Successful addition, 1 = bad year, -1 = no spots
 		
 		"""
-		if course in self._courses:
+		if course in self._courses or len(course) != 8:
 			return 0 # common occurance dont print anything
 		# print("Adding course", course, "to", year, semester)
 		if course not in Plan.DATA:
