@@ -155,7 +155,7 @@ def plan_finder(planCode: str) -> dict[str]:
 
 def courseData(coursesList: list) -> dict:
     courses = {course: dict() for course in coursesList}
-    for courseCode in courses.keys():
+    for courseCode in coursesList:
         print("Now on " + courseCode)
         url = f"https://my.uq.edu.au/programs-courses/course.html?course_code={
             courseCode}"

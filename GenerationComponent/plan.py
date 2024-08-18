@@ -4,6 +4,7 @@ from GenerationComponent.prerequisites import SEM_INFO
 from Scaper.course_scraper import courseData as cD
 
 def pre_off(code):
+	print(66, code)
 	data = cD([code])
 	return (data[code]['Prerequisite'], data[code]['Offerings'])
 
@@ -43,7 +44,8 @@ class Plan:
 		
 		# TODO make it so that there are spaces left for these requirements
 		"""
-		self._options["required"].append(course)
+		if course in self._options["required"]:
+			self._options["required"].append(course)
 
 
 	def get_length(self) -> int:
@@ -94,29 +96,48 @@ class Plan:
 		"""Adds a course to the first availiable spot taking into account
 		prerequisites
 		"""
-		if isinstance(course, list) or isinstance(course, tuple):
-			self.add_required_choice(course) # THEY WILL HAVE TO CHOOSE
-			if not course or len(course) > 2:
+		if isinstance(course, list):
+			o = 0
+			for c in course:
+				o = self.add_course(c)
+			return o
+		
+		if isinstance(course, tuple) or isinstance(course, set):
+			self.add_required_choice(tuple(course)) # THEY WILL HAVE TO CHOOSE
+			if not course:
 				return
-			course = course[0] # take the first option as default
+			course = tuple(course)[0] # take the first option as default
+			return self.add_course(course)
 		if course in self._courses:
 			return # wtf is the point
 
 		# First recurislvey add the prerequisites and their prereqs etc
 		hy, hs = 1, 1 # highest year and semester
 		ps = []
-		if course not in Plan.DATA:
-			ps, os = pre_off(course)
-			Plan.DATA[course] = (ps, os)
-		else:
-			ps = Plan.DATA[course]
+		print(77, course)
+		if isinstance(course, str) and len(course) == 8:
+			if course not in Plan.DATA:
+				ps, os = pre_off(course)
+				Plan.DATA[course] = (ps, os)
+			else:
+				ps = Plan.DATA[course]
+		print(Plan.DATA)
+		print(49, ps)
 		for prereq in ps:
-			if isinstance(prereq, list) or isinstance(prereq, tuple):
+			print(58, prereq)
+			if prereq and isinstance(prereq, list):
+				for c in prereq:
+					self.add_course(c)
+
+			if prereq and (isinstance(prereq, tuple) or isinstance(prereq, set)):
+				prereq = tuple(prereq)
 				# There is a choice one or the other
 				self.add_required_choice(prereq)
 				# choose the first one for now # TODO
 				prereq = prereq[0]
-			elif prereq not in self._courses:
+				print(prereq, 69)
+				
+			elif prereq not in self._courses and len(prereq) == 8:
 				self.add_course(prereq)
 			# get the last semester a prerequisite is in 
 			yr, se = self.get_course_sem(prereq)
