@@ -439,8 +439,14 @@
 		course.classList.remove('dragging');
 	}
   function addPls() {
-	      const give = document.getElementById("cCodeInput").value.toUpperCase();
-        document.getElementById('cCodeInput').value = ""
+	// The add button for courses
+	      const userInput= document.getElementById("cCodeInput");
+		  let courseCode = userInput.value.toUpperCase();
+		  if (courseCode.length != 8) {
+			alert("Invalid code. Must be an 8 alphanumeric code.")
+		  }
+		  else {
+          userInput.value = "";
 	      let newDrag = document.createElement("div");
 	      newDrag.classList.add("course");
 	      newDrag.classList.add("elective");
@@ -453,6 +459,7 @@
 	      });
 
 	      document.getElementById("Elective").appendChild(newDrag);
+		}
 	    }
 
 /// SETS THE YEAR HEADINGS
