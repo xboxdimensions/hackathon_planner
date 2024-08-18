@@ -307,7 +307,7 @@
 	// populating the select year
    
 
-	let lists = [[], [], [], [], [], [], [],[] , [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]
+	let lists = [[], [], [], [], [],[], [], [], [], [],[], [], [], [], []]
 	let dateDropdown = document.getElementById('startingYear');
 	let planDiv = document.getElementsByClassName("semesters")[0];
 
@@ -427,9 +427,8 @@
 				
 				body: JSON.stringify({value : course.innerText, place : semester.id , list : lists})
 			})
-			.then(data => {console.log(data); semester.appendChild(course)})
-			 
 			.then(response => response.json())
+			.then(data => {console.log(data); semester.appendChild(course); lists = data.data;})
 		}
 		
 		semester.classList.remove('over');
@@ -565,10 +564,19 @@ document.getElementById("courseSelect").innerHTML += `<option value="${courseCod
 						this.classList.remove('dragging');
 					});
 					
+					
 					sem.appendChild(newCourse);
 					
 				}
+				var children = sem.children;
+				for (var i = 0; i < children.length; i++) {
+				var tableChild = children[i];
+				console.log(tableChild);
+				console.log(lists[int].push(tableChild.innerText))
+				}
+				console.log(lists)
 				int ++;
+
 				
 			}
 		}

@@ -9,8 +9,7 @@ def name(text: str):
     rangeE = text.find('</h1>')
     text = text[:rangeE]
     text = text.split(" ")
-    text = " ".join(text[0:-1])
-    return text.replace("&amp;", "&")
+    return " ".join(text[0:-1])
 
 
 def preqs(text: str):

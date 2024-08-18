@@ -56,8 +56,9 @@ rules = {'MATH1040': {'Name': 'Mathematical Foundations I', 'Offerings': ['Semes
 
 # returns true if no incompabilities occur in current sem or previous ones
 
-# lists = request.get_json()['list']
+
 def check_no(value, sem):
+    lists = request.get_json()['list']
     for check in lists[:sem]:
         if set(rules[value]['Incompatible']).isdisjoint(set(check)):
             pass
@@ -70,6 +71,7 @@ def check_no(value, sem):
 
 
 def check_yes(value, sem):
+    lists = request.get_json()['list']
     checkers = rules[value]['Prerequisite']
     yesh = [False for i in range(len(checkers))]
     for index, val in enumerate(checkers):
@@ -93,12 +95,13 @@ def place():
     data = request.get_json()
     value  = data["value"]
     place = int(data["place"][-1])
+    lists = request.get_json()['list']
     if check_no(value, place) and not (any(value in sublist for sublist in lists)):
         if not check_yes(value, place):
             return {"status": "no", "data": lists }
-        lists[place-1].append(value)
+        lists[place].append(value)
     print(lists)
-    return {"status": "OK" , "data": lists  }
+    return {"status": "OK" , "data": lists}
 
 
 if __name__ == "__main__":
