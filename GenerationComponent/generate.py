@@ -33,12 +33,12 @@ def generateOptions(UserOptions={}, ProgramOptions={}):
 	# possible place.
 	# If a requirement has two options- this will be displayed to the user
 	
-	# TODO Pre-completed courses
 	# for course in UserOptions["Completed"]:
 	# 		plan.add_completed(course)
 	# 		continue
+	plan._options['core'] = requirements
 	for course in requirements:
-		plan.add_course(course)
+		plan.add_course(course, required=True)
 	return plan
 
 

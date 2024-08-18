@@ -44,7 +44,7 @@ def generate():
 
     #
     userPlan = generateOptions(data, programOptions)
-    rtrn = {"electives":electives,"CoreCourses":userPlan.get_extra('required'), "Plan":userPlan.get_return()}
+    rtrn = {"electives":electives+userPlan.get_extra('extra'),"CoreCourses":userPlan.get_extra('required'), "Plan":userPlan.get_return()}
     print(rtrn)
     return rtrn
 
