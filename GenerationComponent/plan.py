@@ -59,7 +59,7 @@ class Plan:
 		0 = Successful addition, 1 = bad year, -1 = no spots
 		
 		"""
-		if course in self._courses:
+		if course in self._courses or len(course) != 8:
 			return 0 # common occurance dont print anything
 		# print("Adding course", course, "to", year, semester)
 		if course not in Plan.DATA:
@@ -94,11 +94,19 @@ class Plan:
 		"""Adds a course to the first availiable spot taking into account
 		prerequisites
 		"""
-		if isinstance(course, list) or isinstance(course, tuple):
+		if isinstance(course, list):
+			if course:
+				for c in course:
+					self.add_course(c)
+				return
+
+		if isinstance(course, tuple):
 			self.add_required_choice(course) # THEY WILL HAVE TO CHOOSE
 			if not course or len(course) > 2:
 				return
 			course = course[0] # take the first option as default
+			return self.add_course(course)
+			
 		if course in self._courses:
 			return # wtf is the point
 
@@ -111,7 +119,13 @@ class Plan:
 		else:
 			ps = Plan.DATA[course]
 		for prereq in ps:
-			if prereq and (isinstance(prereq, list) or isinstance(prereq, tuple)):
+			if prereq in self._courses:
+				continue
+			if isinstance(prereq, list):
+				if prereq:
+					for c in prereq:
+						self.add_course(c)
+			elif isinstance(prereq, tuple):
 				# There is a choice one or the other
 				self.add_required_choice(prereq)
 				# choose the first one for now # TODO

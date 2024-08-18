@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return render_template("index_copy.html", degreeList=degreeList)
+    return render_template("index.html", degreeList=degreeList)
 
 
 @app.route("/api", methods=["POST"])
@@ -44,7 +44,7 @@ def generate():
 
     #
     userPlan = generateOptions(data, programOptions)
-    rtrn = {"electives":electives,"CoreCourses":userPlan.get_extra('required')+userPlan.get_extra(), "Plan":userPlan.get_return()}
+    rtrn = {"electives":electives,"CoreCourses":userPlan.get_extra('required'), "Plan":userPlan.get_return()}
     print(rtrn)
     return rtrn
 
@@ -74,26 +74,29 @@ def check_no(value, sem):
 
 def check_yes(value, sem):
     lists = request.get_json()['list']
-    checkers = rules[value]['Prerequisite']
-    yesh = [False for i in range(len(checkers))]
-    for index, val in enumerate(checkers):
-        if isinstance(val, tuple):
-            for check in lists[:sem-1]:
-                boold = not set(val).isdisjoint(set(check))
-                if boold:
-                    yesh[index] = True
-                    break
-        else:
-            upto = set()
-            for check in lists[:sem-1]:
-                upto = upto.union(set(check))
-            yesh[index] = set(val).intersection(upto) == upto
-    return False not in yesh
+    try :
+        checkers = rules[value]['Prerequisite']
+        yesh = [False for i in range(len(checkers))]
+        for index, val in enumerate(checkers):
+            if isinstance(val, tuple):
+                for check in lists[:sem-1]:
+                    boold = not set(val).isdisjoint(set(check))
+                    if boold:
+                        yesh[index] = True
+                        break
+            else:
+                upto = set()
+                for check in lists[:sem-1]:
+                    upto = upto.union(set(check))
+                yesh[index] = set(val).intersection(upto) == upto
+    
+    except:
+        return False not in yesh
 
 # def check_preqs() -> bool:
 
 @app.route("/check", methods=["POST"])
-def place():
+def check():
     data = request.get_json()
     value  = data["value"]
     place = int(data["place"][-1])

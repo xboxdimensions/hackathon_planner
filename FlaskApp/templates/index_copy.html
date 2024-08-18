@@ -417,9 +417,9 @@
 			alert('You cannot have more than 4 courses in the first semester of the first year.');
 		} else if (semester.id != 'Elective' && semester.id != 'relevant' && semester.querySelectorAll('.course').length >= 5) {
 			alert('You cannot have more than 5 courses in a semester.');
-		} else {
+		} else if (semester.id != 'Elective' && semester.id != 'relevant') {
 			 // otherwise we are doing CHECKS and adding to semester
-			const response = fetch('http://127.0.0.1:5000/check', {
+			const response =0 /* fetch('http://127.0.0.1:5000/check', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -429,6 +429,8 @@
 			})
 			.then(response => response.json())
 			.then(data => {console.log(data); semester.appendChild(course); lists = data.data;})
+		} else {
+			semester.appendChild(course)
 		}
 		
 		semester.classList.remove('over');
