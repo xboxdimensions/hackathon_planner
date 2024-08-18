@@ -428,12 +428,9 @@
 				body: JSON.stringify({value : course.innerText, place : semester.id , list : lists})
 			})
 			.then(response => response.json())
-			.then(data => {console.log(data, 69); semester.appendChild(course); lists = data.data;}).catch(se)
-	*/ 	}
-		else {
-			console.log(99999);
-			
-			semester.appendChild(course);
+			.then(data => {console.log(data); semester.appendChild(course); lists = data.data;})
+		} else {
+			semester.appendChild(course)
 		}
 		
 		semester.classList.remove('over');
