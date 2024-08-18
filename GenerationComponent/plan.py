@@ -43,7 +43,8 @@ class Plan:
 		
 		# TODO make it so that there are spaces left for these requirements
 		"""
-		self._options["required"].append(course)
+		if course not in self._options["required"]:
+			self._options["required"].append(course)
 
 
 	def get_length(self) -> int:
@@ -94,6 +95,8 @@ class Plan:
 		"""Adds a course to the first availiable spot taking into account
 		prerequisites
 		"""
+		if not course:
+			return 0
 		if isinstance(course, list):
 			if course:
 				for c in course:
@@ -119,8 +122,6 @@ class Plan:
 		else:
 			ps = Plan.DATA[course]
 		for prereq in ps:
-			if prereq in self._courses:
-				continue
 			if isinstance(prereq, list):
 				if prereq:
 					for c in prereq:
