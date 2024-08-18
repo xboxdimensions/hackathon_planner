@@ -4,8 +4,9 @@ from GenerationComponent.prerequisites import SEM_INFO
 from Scaper.course_scraper import courseData as cD
 
 def pre_off(code):
-	data = cD([code])
-	return (data[code]['Prerequisite'], data[code]['Offerings'])
+	if isinstance(code, str) and len(code) == 8:
+		data = cD([code])
+		return (data[code]['Prerequisite'], data[code]['Offerings'])
 
 prerequisites = lambda code : pre_off(code)[0]
 offerrings = lambda code : pre_off(code)[1]
