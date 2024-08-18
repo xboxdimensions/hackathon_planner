@@ -1,633 +1,638 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course planner</title>
 
-    <style>
-      body {
-        font-family: Helvetica, sans-serif;
-        background-color: #4b0082;
-        background-image: url("https://stories.uq.edu.au/contact-magazine/2023/ernest-walter-bick-the-man-who-planted-130-jacarandas-at-uq/assets/U11e5BHA64/uq-contact-jacarandas-history-headline-2560x1440.jpg");
-        background-size: cover;
-        margin: 20px;
-        margin-top: 0;
-        color: white;
-      }
+	<style>
+		body {
+			font-family: Helvetica, sans-serif;
+			background-color: #4b0082;
+			background-image: url("https://stories.uq.edu.au/contact-magazine/2023/ernest-walter-bick-the-man-who-planted-130-jacarandas-at-uq/assets/U11e5BHA64/uq-contact-jacarandas-history-headline-2560x1440.jpg");
+			background-size: cover;
+			margin: 20px;
+			margin-top: 0;
+			color: white;
+			
+		}
+	
 
-      .select {
-        max-height: 80vh;
-      }
-      .title {
-        background-color: #4b0082;
-        margin-top: 0;
-        font-size: larger;
-        text-align: center;
-        color: white;
-        overflow-y: hidden;
-        margin-bottom: 30px;
-      }
+		.select {
+			max-height: 80vh;
+		}
+		.title {
+			background-color: #4b0082;
+			margin-top: 0;
+			font-size: larger;
+			text-align: center;
+			color: white;
+			overflow-y: hidden; 
+			margin-bottom: 30px;
+		}
+	
+		.textBar {
+			text-align: center;
+			margin-bottom: 20px;
+		}
+	
+		#courseSelect {
+			width: 50%;
+			height: 5vh;
+			font-size: 18px;
+			border-radius: 4px;
+			border: 1px solid #ccc;
+			padding: 0 10px;
+		}
+	
+		.options {
+			text-align: center;
+			margin-bottom: 30px;
+		}
+	
+		.options select {
+			margin: 0 10px;
+			width: 15%;
+			height: 5vh;
+			font-size: 18px;
+			border-radius: 4px;
+			border: 1px solid #ccc;
+			padding: 0 10px;
+		}
+	
+		.content {
+			padding: 10px;
+			padding-bottom: 0;
+			border-radius: 8px;
+			background-color: #4b0082;
+			display: flex;
+			justify-content: space-between; /* Ensures space between .plan and .rhs */
+			align-items: flex-start; /* Aligns items at the start of the container */
+		}
+	
+		.plan {
+			width: 70%;
+			padding-right: 20px;
+			margin-bottom: 10px;
+			box-sizing: border-box;
+		}
 
-      .textBar {
-        text-align: center;
-        margin-bottom: 20px;
-      }
+		.plan h1 {
+			margin: 0;
+		}
+	
+		.semesters {
+			background-color: #fff;
+			padding: 20px;
+			border-radius: 8px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			color: #333;
+			overflow-y: scroll; /* Always show vertical scroll */
+			max-height: 55vh; /* Set maximum height for scroll */
+		}
+	
+		.semesters h2 {
+			color: #4b0082;
+			margin-bottom: 20px;
+			text-align: center;
+			max-width: 100%;
+		}
+	
+		.semDiv {
+			display: flex;
+			flex-direction: row;
+		}
+		.semester {
+			padding: 10px;
+			margin: 10px 5px;
+			background-color: #f9f9f9;
+			border: 2px dashed #ccc;
+			border-radius: 4px;
+			width: 45%;
+			border: 2px dashed #ccc;
+			text-align: center;
+			min-height: 6vh;
+			transition: transform 0.3s ease;
+			flex-grow: 1;
+		}
 
-      #courseSelect {
-        width: 50%;
-        height: 5vh;
-        font-size: 18px;
-        border-radius: 4px;
-        border: 1px solid #ccc;
-        padding: 0 10px;
-      }
+        .semester.over {
+            border-color: purple;
+        }
+	
+		.rhs {
+			width: 30%;
+			display: flex;
+			flex-direction: column;
+			box-sizing: border-box;
+		}
+	
+		#courseAdd {
+			margin-bottom: 20px;
+		}
+	
+		#courseAdd input[type="text"] {
+			width: 60%;
+			height: 5vh;
+			font-size: 18px;
+			border-radius: 4px;
+			border: 2px solid #ccc;
+			padding: 0 10px;
+		}
+	
+		#courseAdd input[type="button"] {
+			height: 5vh;
+			width: 30%;
+			font-size: 18px;
+			border-radius: 4px;
+			background-color: white;
+			color: #4b0082;
+			border: none;
+			cursor: pointer;
+		}
+	
+		#relevant, #Elective {
+			background-color: #fff;
+			border-radius: 8px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			color: #333;
+			padding: 10px;
+			margin-bottom: 20px;
+			
+			overflow-y: scroll; /* Always show vertical scroll */
+			overflow-x: hidden;
+			text-align: center;
+		}
+		#Elective {
+			height: 32vh;
+			max-height: 32vh;
+		}
+	
+		#relevant {
+			height: 17vh;
+			max-height: 17vh;
 
-      .options {
-        text-align: center;
-        margin-bottom: 30px;
-      }
+		}
 
-      .options select {
-        margin: 0 10px;
-        width: 15%;
-        height: 5vh;
-        font-size: 18px;
-        border-radius: 4px;
-        border: 1px solid #ccc;
-        padding: 0 10px;
-      }
+		#relevant h2, #Elective h2 {
+			color: #4b0082;
+			margin-top: 0;
+			margin-bottom: 10px;
+		}
+	
+		/* Custom Scrollbar */
+		::-webkit-scrollbar {
+			width: 10px;
+		}
+	
+		::-webkit-scrollbar-thumb {
+			border-radius: 5px;
+			background-color: rgba(0, 0, 0, 0.5);
+		}
 
-      .content {
-        padding: 10px;
-        padding-bottom: 0;
-        border-radius: 8px;
-        background-color: #4b0082;
-        display: flex;
-        justify-content: space-between; /* Ensures space between .plan and .rhs */
-        align-items: flex-start; /* Aligns items at the start of the container */
-      }
 
-      .plan {
-        width: 70%;
-        padding-right: 20px;
-        margin-bottom: 10px;
-        box-sizing: border-box;
-      }
+        .course, .semester {
+            transition: transform 0.3s ease;
+            
+        }
+		.course {
+			border: 2px #ccc;
+			padding: 10px;
+            margin: 10px 0;
+            background-color: rgb(160, 69, 160);
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            cursor: grab; 
+		}
 
-      .plan h1 {
-        margin: 0;
-      }
+		.core {
+			background-color:rgb(210, 43, 43);
+		}
 
-      .semesters {
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        color: #333;
-        overflow-y: scroll; /* Always show vertical scroll */
-        max-height: 55vh; /* Set maximum height for scroll */
-      }
+		.choice {
+			border-radius: 0;
+			background-color:rgb(243, 141, 74);
+		}
 
-      .semesters h2 {
-        color: #4b0082;
-        margin-bottom: 20px;
-        text-align: center;
-        max-width: 100%;
-      }
+		.elective {
+			background-color: lightblue;
+		}
 
-      .semDiv {
-        display: flex;
-        flex-direction: row;
-      }
-      .semester {
-        padding: 10px;
-        margin: 10px 5px;
-        background-color: #f9f9f9;
-        border: 2px dashed #ccc;
-        border-radius: 4px;
-        width: 45%;
-        border: 2px dashed #ccc;
-        text-align: center;
-        min-height: 6vh;
-        transition: transform 0.3s ease;
-        flex-grow: 1;
-      }
-
-      .semester.over {
-        border-color: purple;
-      }
-
-      .rhs {
-        width: 30%;
-        display: flex;
-        flex-direction: column;
-        box-sizing: border-box;
-      }
-
-      #courseAdd {
-        margin-bottom: 20px;
-      }
-
-      #courseAdd input[type="text"] {
-        width: 60%;
-        height: 5vh;
-        font-size: 18px;
-        border-radius: 4px;
-        border: 2px solid #ccc;
-        padding: 0 10px;
-      }
-
-      #courseAdd input[type="button"] {
-        height: 5vh;
-        width: 30%;
-        font-size: 18px;
-        border-radius: 4px;
-        background-color: white;
-        color: #4b0082;
-        border: none;
-        cursor: pointer;
-      }
-
-      #relevant,
-      #Elective {
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        color: #333;
-        padding: 10px;
-        margin-bottom: 20px;
-
-        overflow-y: scroll; /* Always show vertical scroll */
-        overflow-x: hidden;
-        text-align: center;
-      }
-      #Elective {
-        height: 32vh;
-        max-height: 32vh;
-      }
-
-      #relevant {
-        height: 17vh;
-        max-height: 17vh;
-      }
-
-      #relevant h2,
-      #Elective h2 {
-        color: #4b0082;
-        margin-top: 0;
-        margin-bottom: 10px;
-      }
-
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar {
-        width: 10px;
-      }
-
-      ::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        background-color: rgba(0, 0, 0, 0.5);
-      }
-
-      .course,
-      .semester {
-        transition: transform 0.3s ease;
-      }
-      .course {
-        border: 2px #ccc;
-        padding: 10px;
-        margin: 10px 0;
-        background-color: rgb(160, 69, 160);
-        color: #fff;
-        border-radius: 4px;
-        cursor: pointer;
-        text-align: center;
-        cursor: grab;
-      }
-
-      .core {
-        background-color: rgb(210, 43, 43);
-      }
-
-      .choice {
-        border-radius: 0;
-        background-color: rgb(243, 141, 74);
-      }
-
-      .elective {
-        background-color: lightblue;
-      }
-
-      .course.dragging {
+        .course.dragging {
         opacity: 0.5; /* Make the course slightly transparent while being dragged */
-        transform: scale(
-          1
-        ); /* Make the course slightly larger while being dragged */
+        transform: scale(1); /* Make the course slightly larger while being dragged */
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Add a shadow effect while being dragged */
-      }
-      .course.dragging::after {
-        content: "";
+        }
+        .course.dragging::after {
+        content: '';
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(
-          0,
-          0,
-          0,
-          0.2
-        ); /* Add a semi-transparent overlay while being dragged */
-      }
-    </style>
-  </head>
-
-  <body>
-    <!-- Title -->
-    <div class="title"><h1>UQ Program Planner</h1></div>
-
-    <!-- User Input -->
-    <div class="textBar">
-      <select id="courseSelect">
-        <option value="">Select Your Program</option>
-      </select>
-    </div>
-    <div class="options">
-      <select id="plan">
-        <option selected>Select Plan</option>
-      </select>
-      <select id="startingYear">
-        <option value="2024" selected>2024</option>
-      </select>
-      <select id="load">
-        <option value="full" selected>Full time</option>
-        <option value="part">Part time</option>
-      </select>
-    </div>
-
-    <!-- Content -->
-    <div class="content">
-      <!-- Plan -->
-      <div class="plan">
-        <!-- Semesters -->
-        <h1>Your Plan</h1>
-        <div class="semesters"></div>
-      </div>
-
-      <!-- RHS content -->
-      <div class="rhs">
-        <!-- Course add -->
-        <div id="courseAdd">
-          <form>
-            <input
-              type="text"
-              placeholder="Add a course code"
-              id="cCodeInput"
-            />
-            <input
-              type="button"
-              id="courseSubmit"
-              value="Add"
-              onclick="addPls()"
-            />
-          </form>
-        </div>
-
-        <!-- Relevant Courses -->
-        <div id="relevant" ondrop="drop(event)" ondragover="allowDrop(event)">
-          <h2>Core Course Choices</h2>
-        </div>
-
-        <!-- Available Courses -->
-        <div id="Elective" ondrop="drop(event)" ondragover="allowDrop(event)">
-          <h2>Available Elective Courses</h2>
-        </div>
-      </div>
-    </div>
-  </body>
-
-  <script label="SCRIPT FOR INTIIAL RENDER">
-    /**
-     *
-     * Code for the divs etc
-     */
-    ////////////////////////////////////////////////////////////
-    // populating the select year
-
-    let lists = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], []];
-    let dateDropdown = document.getElementById("startingYear");
-    let planDiv = document.getElementsByClassName("semesters")[0];
-
-    let currentYear = new Date().getFullYear();
-    let latestYear = currentYear + 9;
-
-    let i = 0;
-    while (currentYear <= latestYear) {
-      let dateOption = document.createElement("option");
-      dateOption.text = currentYear + 1;
-      dateOption.value = currentYear + 1;
-      let yearDiv = document.createElement("div");
-      yearDiv.id = currentYear;
-
-      let yearTitle = document.createElement("h2");
-
-      yearTitle.innerHTML = currentYear;
-      yearDiv.appendChild(yearTitle);
-      let semsDiv = document.createElement("div");
-      semsDiv.classList.add("semDiv");
-      yearDiv.appendChild(semsDiv);
-      if (currentYear == 2024) {
-        yearTitle.style.marginTop = 0;
-      }
-
-      let sem1Div = document.createElement("div");
-      let sem2Div = document.createElement("div");
-
-      sem1Div.textContent = "Semester 1";
-      sem1Div.style.float = "left";
-      sem2Div.style.float = "right";
-      sem2Div.textContent = "Semester 2";
-
-      sem1Div.classList.add("semester");
-      sem2Div.classList.add("semester");
-
-      sem1Div.ondrop = drop;
-
-      sem2Div.ondrop = drop;
-
-      sem1Div.ondragover = allowDrop;
-      sem2Div.ondragover = allowDrop;
-
-      sem1Div.ondragleave = dragLeave;
-      sem2Div.ondragleave = dragLeave;
-
-      sem1Div.id = "semester" + i;
-      i++;
-      sem2Div.id = "semester" + i;
-      i++;
-
-      dateDropdown.add(dateOption);
-      planDiv.appendChild(yearDiv);
-      semsDiv.appendChild(sem1Div);
-      semsDiv.appendChild(sem2Div);
-
-      currentYear += 1;
-    }
-
-    // end of semesters
-
-    ///////////////////////////////////////////////////////////
-
-    // DRAGGING FUNCTIONS
-    // Add event listeners to all '.course' ie each course dragable
-    document.querySelectorAll(".course").forEach((course) => {
-      course.addEventListener("dragstart", drag); // listen for dragging
-      course.addEventListener("dragend", function () {
-        // end of drag
-        this.classList.remove("dragging");
-      });
-    });
-
-    // runs when event is picked up
-    function drag(event) {
-      event.dataTransfer.setData("text", event.target.id);
-      // save the data of the id of the one picked up
-      event.target.classList.add("dragging");
-      // give it the dragging class
-    }
-
-    // runs when event is being dragged over
-    function allowDrop(event) {
-      event.preventDefault();
-      event.currentTarget.classList.add("over");
-      // add the over class
-    }
-
-    function dragLeave(event) {
-      event.preventDefault();
-      event.currentTarget.classList.remove("over");
-    }
-    function drop(event) {
-      event.preventDefault();
-      const data = event.dataTransfer.getData("text"); // text of the box being dragged/id
-      const course = document.getElementById(data); // the course box being dragged
-      const semester = event.currentTarget; // the place we drop to
-      console.log(course.innerText.toString);
-
-      if (
-        semester.id === "semester0" &&
-        semester.querySelectorAll(".course").length >= 4
-      ) {
-        alert(
-          "You cannot have more than 4 courses in the first semester of the first year."
-        );
-      } else if (
-        semester.id != "Elective" &&
-        semester.id != "relevant" &&
-        semester.querySelectorAll(".course").length >= 5
-      ) {
-        alert("You cannot have more than 5 courses in a semester.");
-      } else if (semester.id != "Elective" && semester.id != "relevant") {
-        // otherwise we are doing CHECKS and adding to semester
-        const response = fetch("http://127.0.0.1:5000/check", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          body: JSON.stringify({
-            value: course.innerText,
-            place: semester.id,
-            list: lists,
-          }),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            console.log(data);
-            semester.appendChild(course);
-            lists = data.data;
-          });
-      } else {
-        semester.appendChild(course);
-      }
-
-      semester.classList.remove("over");
-      course.classList.remove("dragging");
-    }
-
-    /// SETS THE YEAR HEADINGS
-    const changeYears = function () {
-      const startingYear = this.value;
-      const semesterContainers = document.querySelectorAll(".semesters h2");
-
-      semesterContainers.forEach((container, index) => {
-        const year = parseInt(startingYear) + index;
-        container.textContent = year;
-      });
-    };
-    document
-      .getElementById("startingYear")
-      .addEventListener("change", changeYears);
-
-    //// RANDOM INITIALIZING ///
-    // get degree courses from python
-    // const degreeCourses = JSON.parse("{{degreeList | tojson}}");
-
-    for (const courseCode in degreeCourses) {
-      document.getElementById(
-        "courseSelect"
-      ).innerHTML += `<option value="${courseCode}">${degreeCourses[courseCode]}</option>`;
-    }
-    // ad ad thingy
-
-    // SERVER REQUESTS ETC  ///////////////////////////////////////////////////////////
-
-    // Add event listener to the select element to get the selected course code
-    const update = function () {
-      let tthis = document.getElementById("courseSelect");
-      const ProgramCode = tthis.value;
-
-      // Make a fetch request to the server-side API endpoint
-      const response = fetch("http://127.0.0.1:5000/api", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          ProgramCode: ProgramCode,
-          startingYear: document.getElementById("startingYear").value,
-          Load: document.getElementById("load").value,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          // Clear all children before appending new courses
-          document.getElementById("Elective").innerHTML =
-            "<h2>Available Elective Courses</h2>"; // clearing Core courses
-          document.getElementById("relevant").innerHTML =
-            "<h2>Core Course Choices</h2>";
-
-          // for all the core courses
-          for (const Avcourse in data.CoreCourses) {
-            if (data.CoreCourses[Avcourse].length == 1) {
-              // <div class="course" id="CSSE2001" draggable="true">CSSE2001</div>
-              const newCourse = document.createElement("div");
-              newCourse.classList.add("course");
-              newCourse.textContent = data.CoreCourses[Avcourse];
-              newCourse.id = newCourse.textContent;
-              newCourse.draggable = true;
-              newCourse.addEventListener("dragstart", drag);
-              newCourse.addEventListener("dragend", function () {
-                this.classList.remove("dragging");
-              });
-              // Append the new course to the Core courses
-              document.getElementById("relevant").appendChild(newCourse);
-            } else {
-              // otherwise the choosing things a or b stat1201 or stat1301
-              const newD = document.createElement("div");
-              newD.classList.add("course");
-              newD.classList.add("choice");
-              newD.id = "CHOICE" + Avcourse;
-              newD.draggable = "false";
-
-              const newS = document.createElement("select");
-              newS.onchange = function (event) {
-                return makeChoice(event.target);
-              };
-
-              let rel = document.getElementById("relevant");
-              rel.appendChild(newD);
-              newD.appendChild(newS);
-              for (const optn in data.CoreCourses[Avcourse]) {
-                let oCode = data.CoreCourses[Avcourse][optn];
-                //  data.CoreCourses[Avcourse]
-                // <div class="course choice" id="CHOICE1" draggable=""><select onchange="makeChoice(this)"><option value="CSSE1001">CSSE1001</option>
-                // <option value="ENGI1100">ENGI1100</option></select></div>
-                let opt = document.createElement("option");
-                opt.value = oCode;
-                opt.innerHTML = oCode;
-                newS.appendChild(opt);
-              }
-            }
-          }
-
-          // for all the electives
-          const elecDiv = document.getElementById("Elective");
-          elecDiv.innerHTML = "<h2>Available Elective Courses</h2>";
-
-          for (const Elec in data.electives) {
-            // <div class="course core" draggable="true" id="CSSE2010">CSSE2010</div>
-            let newDrag = document.createElement("div");
-            newDrag.classList.add("course");
-            newDrag.classList.add("elective");
-            newDrag.draggable = "true";
-            newDrag.id = data.electives[Elec];
-            newDrag.innerHTML = newDrag.id;
-            newDrag.addEventListener("dragstart", drag);
-            newDrag.addEventListener("dragend", function () {
-              this.classList.remove("dragging");
-            });
-
-            elecDiv.appendChild(newDrag);
-          }
-          int = 0;
-          for (year in data.Plan) {
-            for (semester in data.Plan[year]) {
-              let sem = document.getElementById(`semester${int}`);
-              sem.innerHTML = "";
-              sem.textContent = "Semester " + ((int % 2) + 1);
-              for (course in data.Plan[year][semester]) {
-                const newCourse = document.createElement("div");
-                newCourse.classList.add("course");
-                newCourse.classList.add("core");
-                newCourse.draggable = true;
-                newCourse.id = data.Plan[year][semester][course];
-                newCourse.textContent = data.Plan[year][semester][course];
-                newCourse.addEventListener("dragstart", drag);
-                newCourse.addEventListener("dragend", function () {
-                  this.classList.remove("dragging");
-                });
-
-                sem.appendChild(newCourse);
-              }
-              var children = sem.children;
-              for (var i = 0; i < children.length; i++) {
-                var tableChild = children[i];
-                console.log(tableChild);
-                console.log(lists[int].push(tableChild.innerText));
-              }
-              console.log(lists);
-              int++;
-            }
-          }
-          // Re-add drag and drop event listeners to the courses
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    };
-
-    document.getElementById("courseSelect").addEventListener("change", update);
-    document.getElementById("load").addEventListener("change", update);
-
-    //// CHOICES
-
-    const makeChoice = function (item) {
-      console.log(item);
-      let val = [...item.options].map((o) => o.value);
-      let courseCode = item.options[item.selectedIndex].text;
-      let dragg = null;
-      val.forEach(function (code) {
-        let draggable = document.getElementById(code);
-
-        if (draggable != null) {
-          dragg = draggable;
+        background-color: rgba(0, 0, 0, 0.2); /* Add a semi-transparent overlay while being dragged */
         }
-      });
+	</style>
+	
+</head>
 
-      dragg.id = courseCode;
-      dragg.innerHTML = courseCode;
-    };
-  </script>
+<body>
+	<!-- Title -->
+	<div class="title"><h1>UQ Program Planner</h1></div>
+	
+	<!-- User Input -->
+	<div class="textBar">
+		<select id="courseSelect">
+			<option value="">Select Your Program</option>
+		</select>
+	</div>
+	<div class="options">
+		<select id="plan">
+			<option selected>Select Plan</option>
+		</select>
+		<select id="startingYear">
+			<option value="2024" selected>2024</option>
+		</select>
+		<select id="load">
+			<option value="full" selected>Full time</option>
+			<option value="part">Part time</option>
+		</select>
+	</div>
+
+	<!-- Content -->
+	<div class="content">
+		<!-- Plan -->
+		<div class="plan">
+			<!-- Semesters -->
+			<h1>Your Plan</h1>
+			<div class="semesters">
+			</div>
+		</div>		
+
+		<!-- RHS content -->
+		<div class="rhs">
+			<!-- Course add -->
+			<div id="courseAdd">
+				<form>
+					<input type="text" placeholder="Add a course code" id="cCodeInput">
+					<input type="button" value="Add" onclick="addPls()">
+				</form>
+			</div>
+
+			<!-- Relevant Courses -->
+			<div id="relevant" ondrop="drop(event)" ondragover="allowDrop(event)">
+				<h2>Core Course Choices</h2>
+			</div>
+
+			
+			
+
+			<!-- Available Courses -->
+			<div id="Elective" ondrop="drop(event)" ondragover="allowDrop(event)">
+				<h2>Available Elective Courses</h2>
+				
+			</div>
+		</div>
+	</div>
+</body>
+
+<script label="SCRIPT FOR INTIIAL RENDER">
+	/**
+	 * 
+	 * Code for the divs etc
+	*/
+////////////////////////////////////////////////////////////
+	// populating the select year
+   
+
+	let lists = [[], [], [], [], [],[], [], [], [], [],[], [], [], [], []]
+	let dateDropdown = document.getElementById('startingYear');
+	let planDiv = document.getElementsByClassName("semesters")[0];
+
+
+	let currentYear = new Date().getFullYear();
+	let latestYear = currentYear+9;
+
+	let i = 0;
+	while (currentYear <= latestYear) {
+	let dateOption = document.createElement('option');
+	dateOption.text = currentYear+1;
+	dateOption.value = currentYear+1;
+	let yearDiv = document.createElement('div');
+	yearDiv.id = currentYear;
+	
+	let yearTitle = document.createElement('h2');
+	
+	yearTitle.innerHTML = currentYear;
+	yearDiv.appendChild(yearTitle);
+	let semsDiv = document.createElement('div');
+	semsDiv.classList.add('semDiv');
+	yearDiv.appendChild(semsDiv);
+	if (currentYear == 2024) {
+			yearTitle.style.marginTop = 0;
+	}
+	
+	
+	let sem1Div = document.createElement('div');
+	let sem2Div = document.createElement('div');
+
+	sem1Div.textContent = "Semester 1";
+	sem1Div.style.float = "left"
+	sem2Div.style.float= "right"
+	sem2Div.textContent = "Semester 2"; 
+
+	sem1Div.classList.add("semester");
+	sem2Div.classList.add("semester");
+	
+	
+
+	sem1Div.ondrop = drop;
+	
+	sem2Div.ondrop = drop;
+
+	
+	sem1Div.ondragover = allowDrop;
+	sem2Div.ondragover = allowDrop;
+
+	sem1Div.ondragleave = dragLeave;
+	sem2Div.ondragleave = dragLeave;
+
+	sem1Div.id = "semester" + i;
+	i++;
+	sem2Div.id = "semester" + i;
+	i++;
+
+	
+	dateDropdown.add(dateOption);
+	planDiv.appendChild(yearDiv);
+	semsDiv.appendChild(sem1Div);
+	semsDiv.appendChild(sem2Div);
+
+	
+	currentYear += 1;
+	}
+
+	// end of semesters
+
+///////////////////////////////////////////////////////////
+
+// DRAGGING FUNCTIONS 
+	// Add event listeners to all '.course' ie each course dragable
+	document.querySelectorAll('.course').forEach(course => {
+		course.addEventListener('dragstart', drag); // listen for dragging
+		course.addEventListener('dragend', function() { // end of drag
+			this.classList.remove('dragging');
+		});
+	});
+
+	// runs when event is picked up
+	function drag(event) { 
+		event.dataTransfer.setData('text', event.target.id);
+		// save the data of the id of the one picked up
+		event.target.classList.add('dragging');
+		// give it the dragging class
+	}
+
+	// runs when event is being dragged over
+	function allowDrop(event) {
+		event.preventDefault();
+		event.currentTarget.classList.add('over');
+		// add the over class
+	}
+	
+	function dragLeave(event) {
+		event.preventDefault();
+		event.currentTarget.classList.remove('over');
+	}
+	function drop(event) {
+		event.preventDefault();
+		const data = event.dataTransfer.getData('text'); // text of the box being dragged/id
+		const course = document.getElementById(data); // the course box being dragged
+		const semester = event.currentTarget; // the place we drop to
+		console.log(course.innerText.toString)
+
+		if (semester.id === 'semester0' && semester.querySelectorAll('.course').length >= 4) {
+			alert('You cannot have more than 4 courses in the first semester of the first year.');
+		} else if (semester.id != 'Elective' && semester.id != 'relevant' && semester.querySelectorAll('.course').length >= 5) {
+			alert('You cannot have more than 5 courses in a semester.');
+		} else if (semester.id != 'Elective' && semester.id != 'relevant') {
+			 // otherwise we are doing CHECKS and adding to semester
+			const response = fetch('http://127.0.0.1:5000/check', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+				},
+				
+				body: JSON.stringify({value : course.innerText, place : semester.id , list : lists})
+			})
+			.then(response => response.json())
+			.then(data => {console.log(data); semester.appendChild(course); lists = data.data;})
+        }
+		else {
+			semester.appendChild(course);
+		}
+		
+		semester.classList.remove('over');
+		course.classList.remove('dragging');
+	}
+  function addPls() {
+	      const give = document.getElementById("cCodeInput").value.toUpperCase();
+        document.getElementById('cCodeInput').value = ""
+	      let newDrag = document.createElement("div");
+	      newDrag.classList.add("course");
+	      newDrag.classList.add("elective");
+	      newDrag.draggable = "true";
+	      newDrag.id = give;
+	      newDrag.innerHTML = newDrag.id;
+	      newDrag.addEventListener("dragstart", drag);
+	      newDrag.addEventListener("dragend", function () {
+	        this.classList.remove("dragging");
+	      });
+
+	      document.getElementById("Elective").appendChild(newDrag);
+	    }
+
+/// SETS THE YEAR HEADINGS
+	const changeYears = function() {
+		const startingYear = this.value ;
+		const semesterContainers = document.querySelectorAll('.semesters h2');
+
+		semesterContainers.forEach((container, index) => {
+			const year = parseInt(startingYear) + index;
+			container.textContent = year;
+		});
+		
+	};
+	document.getElementById('startingYear').addEventListener('change', changeYears);
+
+//// RANDOM INITIALIZING /// 
+	// get degree courses from python
+	const degreeCourses =JSON.parse('{{degreeList | tojson}}'); 
+
+for (const courseCode in degreeCourses) {
+document.getElementById("courseSelect").innerHTML += `<option value="${courseCode}">${degreeCourses[courseCode]}</option>`;
+}
+// ad ad thingy
+
+// SERVER REQUESTS ETC  ///////////////////////////////////////////////////////////
+
+// Add event listener to the select element to get the selected course code
+	const update = function() {
+		let tthis = document.getElementById('courseSelect');
+	const ProgramCode = tthis.value;
+
+	// Make a fetch request to the server-side API endpoint
+	const response = fetch('http://127.0.0.1:5000/api', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		
+		body: JSON.stringify({ProgramCode: ProgramCode, 
+			startingYear: document.getElementById('startingYear').value,
+		Load: document.getElementById('load').value})
+	})
+	.then(response => response.json())
+	.then(data => {
+		// Clear all children before appending new courses
+		document.getElementById("Elective").innerHTML = "<h2>Available Elective Courses</h2>"; // clearing Core courses
+		document.getElementById("relevant").innerHTML = "<h2>Core Course Choices</h2>";
+		
+		
+
+			// for all the core courses
+		for (const Avcourse in data.CoreCourses) {
+			if (data.CoreCourses[Avcourse].length == 1){
+				// <div class="course" id="CSSE2001" draggable="true">CSSE2001</div>
+				const newCourse = document.createElement('div');
+			newCourse.classList.add('course');
+			newCourse.textContent = data.CoreCourses[Avcourse];
+			newCourse.id = newCourse.textContent;
+			newCourse.draggable = true;
+			newCourse.addEventListener('dragstart', drag);
+			newCourse.addEventListener('dragend', function() {
+				this.classList.remove('dragging');
+			});
+			// Append the new course to the Core courses
+			document.getElementById("relevant").appendChild(newCourse);
+			}
+			else {
+				// otherwise the choosing things a or b stat1201 or stat1301
+				const newD = document.createElement('div');
+					newD.classList.add("course");
+					newD.classList.add("choice");
+					newD.id = "CHOICE" + Avcourse;
+					newD.draggable = "false";
+
+					const newS = document.createElement('select');
+					newS.onchange = function(event) {return makeChoice(event.target);};
+					
+					let rel = document.getElementById("relevant");
+					rel.appendChild(newD);
+					newD.appendChild(newS);
+				for (const optn in data.CoreCourses[Avcourse]) {
+					let oCode = data.CoreCourses[Avcourse][optn];
+					//  data.CoreCourses[Avcourse]
+					// <div class="course choice" id="CHOICE1" draggable=""><select onchange="makeChoice(this)"><option value="CSSE1001">CSSE1001</option>
+					// <option value="ENGI1100">ENGI1100</option></select></div>
+					let opt = document.createElement('option');
+					opt.value = oCode;
+					opt.innerHTML = oCode;
+					newS.appendChild(opt);
+				}
+			}
+		}
+
+		// for all the electives
+		const elecDiv = document.getElementById("Elective");
+		elecDiv.innerHTML = "<h2>Available Elective Courses</h2>";
+
+		for (const Elec in data.electives) {
+			// <div class="course core" draggable="true" id="CSSE2010">CSSE2010</div>
+			let newDrag = document.createElement('div');
+			newDrag.classList.add("course");
+			newDrag.classList.add("elective");
+			newDrag.draggable = "true";
+			newDrag.id = data.electives[Elec];
+			newDrag.innerHTML = newDrag.id;
+			newDrag.addEventListener('dragstart', drag);
+			newDrag.addEventListener('dragend', function() {
+				this.classList.remove('dragging');
+			});
+
+			elecDiv.appendChild(newDrag);
+		}
+		int = 0;
+		for (year in (data.Plan)){
+			for (semester in data.Plan[year]){
+			
+				let sem = document.getElementById(`semester${int}`);
+				sem.innerHTML = '';
+				sem.textContent = "Semester " + ((int) % 2 + 1);
+				for(course in data.Plan[year][semester]){
+					const newCourse = document.createElement('div');
+					newCourse.classList.add('course');
+					newCourse.classList.add('core')
+					newCourse.draggable = true;
+					newCourse.id =  data.Plan[year][semester][course];
+					newCourse.textContent = data.Plan[year][semester][course];
+					newCourse.addEventListener('dragstart', drag);
+					newCourse.addEventListener('dragend', function() {
+						this.classList.remove('dragging');
+					});
+					
+					
+					sem.appendChild(newCourse);
+					
+				}
+				var children = sem.children;
+				for (var i = 0; i < children.length; i++) {
+				var tableChild = children[i];
+				console.log(tableChild);
+				console.log(lists[int].push(tableChild.innerText))
+				}
+				console.log(lists)
+				int ++;
+
+				
+			}
+		}
+		// Re-add drag and drop event listeners to the courses
+	})
+	.catch((error) => {
+		console.error('Error:', error);
+	});
+}
+
+
+
+document.getElementById('courseSelect').addEventListener('change', update);
+document.getElementById('load').addEventListener('change', update);
+
+
+//// CHOICES
+
+
+
+const makeChoice = function(item) {
+	console.log(item);
+	let val = [...item.options].map(o => o.value)
+	let courseCode = item.options[item.selectedIndex].text;
+	let dragg = null;
+	val.forEach(function(code) {
+	let draggable = document.getElementById(code);
+	
+	if (draggable != null) {
+		dragg = draggable;
+	
+	}});
+	
+	dragg.id = courseCode;
+	dragg.innerHTML = courseCode;
+}
+
+</script>
+
 </html>
