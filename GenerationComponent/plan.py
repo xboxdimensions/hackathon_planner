@@ -111,7 +111,7 @@ class Plan:
 		else:
 			ps = Plan.DATA[course]
 		for prereq in ps:
-			if isinstance(prereq, list) or isinstance(prereq, tuple):
+			if prereq and (isinstance(prereq, list) or isinstance(prereq, tuple)):
 				# There is a choice one or the other
 				self.add_required_choice(prereq)
 				# choose the first one for now # TODO

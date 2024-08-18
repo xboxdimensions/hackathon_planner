@@ -4,7 +4,7 @@ import sys, os
 from pprint import pprint
 sys.path.insert(0, os.path.abspath('../'))
 from GenerationComponent.generate import generateOptions
-from Scaper.course_scraper import scrapePlansAndCore
+from Scaper.course_scraper import scrapePlansAndCore, courseData
 from FlaskApp.data import degreeList
 DEVELOPMENT_ENV = True
 
@@ -59,6 +59,8 @@ rules = {'MATH1040': {'Name': 'Mathematical Foundations I', 'Offerings': ['Semes
 
 def check_no(value, sem):
     lists = request.get_json()['list']
+    if not rules.get(value):
+        rules.update(courseData([value]))
     for check in lists[:sem]:
         if set(rules[value]['Incompatible']).isdisjoint(set(check)):
             pass
