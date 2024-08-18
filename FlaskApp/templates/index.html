@@ -455,22 +455,6 @@
       course.classList.remove("dragging");
     }
 
-    function addPls() {
-      const give = document.getElementById("cCodeInput").value;
-      let newDrag = document.createElement("div");
-      newDrag.classList.add("course");
-      newDrag.classList.add("elective");
-      newDrag.draggable = "true";
-      newDrag.id = give;
-      newDrag.innerHTML = newDrag.id;
-      newDrag.addEventListener("dragstart", drag);
-      newDrag.addEventListener("dragend", function () {
-        this.classList.remove("dragging");
-      });
-
-      document.getElementById("Elective").appendChild(newDrag);
-    }
-
     /// SETS THE YEAR HEADINGS
     const changeYears = function () {
       const startingYear = this.value;
