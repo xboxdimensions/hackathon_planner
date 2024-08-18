@@ -419,6 +419,7 @@
 			alert('You cannot have more than 5 courses in a semester.');
 		} else if (semester.id != 'Elective' && semester.id != 'relevant') {
 			 // otherwise we are doing CHECKS and adding to semester
+			 document.body.style.cursor = 'wait';
 			const response = fetch('http://127.0.0.1:5000/check', {
 			method: 'POST',
 			headers: {
@@ -428,7 +429,7 @@
 				body: JSON.stringify({value : course.innerText, place : semester.id , list : lists})
 			})
 			.then(response => response.json())
-			.then(data => {console.log(data); semester.appendChild(course); lists = data.data;})
+			.then(data => {console.log(data); semester.appendChild(course); lists = data.data; document.body.style.cursor = 'default';})
         }
 		else {
 			semester.appendChild(course);
@@ -484,6 +485,7 @@ document.getElementById("courseSelect").innerHTML += `<option value="${courseCod
 	const ProgramCode = tthis.value;
 
 	// Make a fetch request to the server-side API endpoint
+	document.body.style.cursor = 'wait';
 	const response = fetch('http://127.0.0.1:5000/api', {
 		method: 'POST',
 		headers: {
@@ -543,6 +545,7 @@ document.getElementById("courseSelect").innerHTML += `<option value="${courseCod
 					newS.appendChild(opt);
 				}
 			}
+			document.body.style.cursor = 'default';
 		}
 
 		// for all the electives
