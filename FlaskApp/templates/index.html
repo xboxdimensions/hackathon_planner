@@ -1,68 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+	<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course planner</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: purple;
-            margin: 20px;
-        }
 
-        .required {
-            background-color: purple;
-        }
-        .optional {
-            background-color: black;
-        }
+	<style>
+		body {
+			font-family: Helvetica, sans-serif;
+			background-color: #4b0082;
+			background-image: url("https://stories.uq.edu.au/contact-magazine/2023/ernest-walter-bick-the-man-who-planted-130-jacarandas-at-uq/assets/U11e5BHA64/uq-contact-jacarandas-history-headline-2560x1440.jpg");
+			background-size: cover;
+			margin: 20px;
+			margin-top: 0;
+			color: white;
+			
+		}
+	
 
-        .container {
-            display: flex;
-            justify-content: space-between;
-        }
-        .courses{
-            overflow-y: scroll;
-            height:fit-content;
-            position: sticky;
-            top: 0;
+		.select {
+			max-height: 80vh;
+		}
+		.title {
+			background-color: #4b0082;
+			margin-top: 0;
+			font-size: larger;
+			text-align: center;
+			color: white;
+			overflow-y: hidden; 
+			margin-bottom: 30px;
+		}
+	
+		.textBar {
+			text-align: center;
+			margin-bottom: 20px;
+		}
+	
+		#courseSelect {
+			width: 50%;
+			height: 5vh;
+			font-size: 18px;
+			border-radius: 4px;
+			border: 1px solid #ccc;
+			padding: 0 10px;
+		}
+	
+		.options {
+			text-align: center;
+			margin-bottom: 30px;
+		}
+	
+		.options select {
+			margin: 0 10px;
+			width: 15%;
+			height: 5vh;
+			font-size: 18px;
+			border-radius: 4px;
+			border: 1px solid #ccc;
+			padding: 0 10px;
+		}
+	
+		.content {
+			padding: 10px;
+			padding-bottom: 0;
+			border-radius: 8px;
+			background-color: #4b0082;
+			display: flex;
+			justify-content: space-between; /* Ensures space between .plan and .rhs */
+			align-items: flex-start; /* Aligns items at the start of the container */
+		}
+	
+		.plan {
+			width: 70%;
+			padding-right: 20px;
+			margin-bottom: 10px;
+			box-sizing: border-box;
+		}
 
-        }
-        .courses, .semesters {
-            width: 45%;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;     
-        }
+		.plan h1 {
+			margin: 0;
+		}
+	
+		.semesters {
+			background-color: #fff;
+			padding: 20px;
+			border-radius: 8px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			color: #333;
+			overflow-y: scroll; /* Always show vertical scroll */
+			max-height: 55vh; /* Set maximum height for scroll */
+		}
+	
+		.semesters h2 {
+			color: #4b0082;
+			margin-bottom: 20px;
+			text-align: center;
+			max-width: 100%;
+		}
+	
+		.semDiv {
+			display: flex;
+			flex-direction: row;
+		}
+		.semester {
+			padding: 10px;
+			margin: 10px 5px;
+			background-color: #f9f9f9;
+			border: 2px dashed #ccc;
+			border-radius: 4px;
+			width: 45%;
+			border: 2px dashed #ccc;
+			text-align: center;
+			min-height: 6vh;
+			transition: transform 0.3s ease;
+			flex-grow: 1;
+		}
 
-        .courses h2, .semesters h2 {
-            margin-bottom: 20px;
-            text-align: center;
+        .semester.over {
+            border-color: purple;
         }
-        .course, .semester {
-            padding: 10px;
-            margin: 10px 0;
-            background-color: purple;
-            color: #fff;
-            border-radius: 4px;
-            cursor: pointer;
-            text-align: center;
-            cursor: grab; 
-        }
-        
+	
+		.rhs {
+			width: 30%;
+			display: flex;
+			flex-direction: column;
+			box-sizing: border-box;
+		}
+	
+		#courseAdd {
+			margin-bottom: 20px;
+		}
+	
+		#courseAdd input[type="text"] {
+			width: 60%;
+			height: 5vh;
+			font-size: 18px;
+			border-radius: 4px;
+			border: 2px solid #ccc;
+			padding: 0 10px;
+		}
+	
+		#courseAdd input[type="button"] {
+			height: 5vh;
+			width: 30%;
+			font-size: 18px;
+			border-radius: 4px;
+			background-color: white;
+			color: #4b0082;
+			border: none;
+			cursor: pointer;
+		}
+	
+		#relevant, #Elective {
+			background-color: #fff;
+			border-radius: 8px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			color: #333;
+			padding: 10px;
+			margin-bottom: 20px;
+			
+			overflow-y: scroll; /* Always show vertical scroll */
+			overflow-x: hidden;
+			text-align: center;
+		}
+		#Elective {
+			height: 32vh;
+			max-height: 32vh;
+		}
+	
+		#relevant {
+			height: 17vh;
+			max-height: 17vh;
+
+		}
+
+		#relevant h2, #Elective h2 {
+			color: #4b0082;
+			margin-top: 0;
+			margin-bottom: 10px;
+		}
+	
+		/* Custom Scrollbar */
+		::-webkit-scrollbar {
+			width: 10px;
+		}
+	
+		::-webkit-scrollbar-thumb {
+			border-radius: 5px;
+			background-color: rgba(0, 0, 0, 0.5);
+		}
 
 
         .course, .semester {
             transition: transform 0.3s ease;
             
         }
+		.course {
+			border: 2px #ccc;
+			padding: 10px;
+            margin: 10px 0;
+            background-color: rgb(160, 69, 160);
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            cursor: grab; 
+		}
+
+		.core {
+			background-color:rgb(210, 43, 43);
+		}
+
+		.choice {
+			border-radius: 0;
+			background-color:rgb(243, 141, 74);
+		}
+
+		.elective {
+			background-color: lightblue;
+		}
 
         .course.dragging {
         opacity: 0.5; /* Make the course slightly transparent while being dragged */
-        transform: scale(1.1); /* Make the course slightly larger while being dragged */
+        transform: scale(1); /* Make the course slightly larger while being dragged */
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Add a shadow effect while being dragged */
         }
         .course.dragging::after {
@@ -74,333 +234,386 @@
         height: 100%;
         background-color: rgba(0, 0, 0, 0.2); /* Add a semi-transparent overlay while being dragged */
         }
-        .allcourses {
-            border: 2px dashed #ccc;
-        }
-        .semester {
-            min-height: 50px;
-            background-color: #f9f9f9;
-            border: 2px dashed #ccc;
-            color: #333;
-        }
-        .semester.over {
-            border-color: purple;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: purple;
-        }
-    </style>
+	</style>
+	
 </head>
+
 <body>
-<div class="container">
-    <div class="semesters">
-        <h1>UQCS Planner</h1>
-    </div>
-    <div class="semesters">
-        <h1>Degree Information</h1>
-        <label for="starting-year">Starting Year:</label>
-        <select id="starting-year">
-            <option value="2024">2024</option>
-            <option value="2025">2025</option>
-            <option value="2026">2026</option>
-            <option value="2027">2027</option>
-        </select>
-        <br>
-        <label for="Course">Course:</label>
-        <select id="courseSelect">
-            <option value="">Select a Course</option>
-        </select>
-        <label for="plan">Plan<label>
-            <select id="planselect">
-            <option value="">Select a Plan</option>
-        </select>
-        <label for="laod">Load:</label>
-        <select id="laod">
-            <option value="select">Select a load</option>
-            <option value="full">Full time</option>
-            <option value="part">Part time</option>
-        </select>
-    </div>
-</div>
-<br>
-<div class="container">
-    <div class="semesters">
-        <h1>Courses</h1>
-        <h2>2024</h2>
-        <div class="semester" id="semester1" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 1</div>
-        <div class="semester" id="semester2" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 2</div>
-        <h2>2025</h2>
-        <div class="semester" id="semester3" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 1</div>
-        <div class="semester" id="semester4" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 2</div>
-        <h2>2026</h2>
-        <div class="semester" id="semester5" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 1</div>
-        <div class="semester" id="semester6" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 2</div>
-        <h2>2027</h2>
-        <div class="semester" id="semester7" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 1</div>
-        <div class="semester" id="semester8" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Semester 2</div>
-    </div>
+	<!-- Title -->
+	<div class="title"><h1>UQ Program Planner</h1></div>
+	
+	<!-- User Input -->
+	<div class="textBar">
+		<select id="courseSelect">
+			<option value="">Select Your Program</option>
+		</select>
+	</div>
+	<div class="options">
+		<select id="plan">
+			<option selected>Select Plan</option>
+		</select>
+		<select id="startingYear">
+			<option value="2024" selected>2024</option>
+		</select>
+		<select id="load">
+			<option value="full" selected>Full time</option>
+			<option value="part">Part time</option>
+		</select>
+	</div>
 
-    <div class="courses">
-        <h1>Available Courses</h1>
-        <div class="semester" id="cou" ondrop="drop(event)" ondragover="allowDrop(event)">
-        <!-- <div class="course" draggable="true" id="course1">ENGG1300: Introduction to Electrical Systems</div>
-        <div class="course" draggable="true" id="course2">INFS1200: Introduction to Information Systems</div>
-        <div class="course" draggable="true" id="course3">MATH1061: Discrete Mathematics</div>
-        <div class="course" draggable="true" id="course4">CSSE2002: Programming in the Large</div>
-        <div class="course" draggable="true" id="course5">CSSE2010: Introduction to Computer Systems</div>
-        <div class="course" draggable="true" id="course6">CSSE2310: Computer Systems Principles and Programming</div>
-        <div class="course" draggable="true" id="course7">DECO2500: Human-Computer Interaction</div>
-        <div class="course" draggable="true" id="course8">STAT2203: Probability Models & Data Analysis</div>
-        <div class="course" draggable="true" id="course9">COMP3400: Functional & Logic Programming</div>
-        <div class="course" draggable="true" id="course10">COMP3506: Algorithms & Data Structures</div>
-        <div class="course" draggable="true" id="course11">CSSE3012: The Software Process</div>
-        <div class="course" draggable="true" id="course12">CSSE3200: Software Engineering Studio: Design, Implement & Test</div>
-        <div class="course" draggable="true" id="course13">DECO3800: Design Computing Studio 3 - Proposal</div>
-        <div class="course" draggable="true" id="course14">DECO3801: Design Computing Studio 3 - Build</div>
-        <div class="course" draggable="true" id="course15">CSSE6400: Software Architecture</div>
-        <div class="course" draggable="true" id="course16">ENGG4900: Professional Practice and the Business Environment</div>
-        <div class="course" draggable="true" id="course17">ENGG7290: Engineering Placement Semester</div>
-        <div class="course" draggable="true" id="course18">ENGG7701: Engineering Grand Challenges</div> -->
-    </div>
-    </div>
-</div>
-<script>
-    document.querySelectorAll('.course').forEach(course => {
-        course.addEventListener('dragstart', drag);
-        course.addEventListener('dragend', function() {
-            this.classList.remove('dragging');
-        });
-    });
+	<!-- Content -->
+	<div class="content">
+		<!-- Plan -->
+		<div class="plan">
+			<!-- Semesters -->
+			<h1>Your Plan</h1>
+			<div class="semesters">
+			</div>
+		</div>		
 
-    function allowDrop(event) {
-        event.preventDefault();
-        event.currentTarget.classList.add('over');
-    }
-    
-    function dragLeave(event) {
-        
-        
-        event.preventDefault();
-        event.currentTarget.classList.remove('over');
-    }
+		<!-- RHS content -->
+		<div class="rhs">
+			<!-- Course add -->
+			<div id="courseAdd">
+				<form>
+					<input type="text" placeholder="Add a course code" id="cCodeInput">
+					<input type="button" value="Add">
+				</form>
+			</div>
 
-    function drop(event) {
-        event.preventDefault();
-        const data = event.dataTransfer.getData('text'); // text of the box
-        const course = document.getElementById(data); // the course box being dragged
-        const semester = event.currentTarget; // the place we drop to
+			<!-- Relevant Courses -->
+			<div id="relevant" ondrop="drop(event)" ondragover="allowDrop(event)">
+				<h2>Core Course Choices</h2>
+			</div>
 
-    
-        if (semester.id == "cou") { // if we are dragging into the course list
-     
-            
-                semester.appendChild(course); // add to course list 
-            } else if (semester.id === 'semester1' && semester.querySelectorAll('.course').length >= 4) {
-            alert('You cannot have more than 4 courses in the first semester of the first year.');
-        } else if (semester.querySelectorAll('.course').length >= 5) {
-            alert('You cannot have more than 5 courses in a semester.');
-        } else {
-             // otherwise we are doing CHECKS and adding to semester 
-       
-             semester.appendChild(course);
-               
-                
-            }
-        
-        semester.classList.remove('over');
-        course.classList.remove('dragging');
-    }
-    function drag(event) {
-        event.dataTransfer.setData('text', event.target.id);
-        event.target.classList.add('dragging');
-    }
-    document.getElementById('starting-year').addEventListener('change', function() {
-        const startingYear = this.value - 1;
-        const semesterContainers = document.querySelectorAll('.semesters h2');
+			
+			
 
-        semesterContainers.forEach((container, index) => {
-            const year = parseInt(startingYear) + index;
-            container.textContent = year;
-        });
-        
-    });
-    const degreeCourses = {
-  "1602": "Diploma in Languages",
-  "2000": "Arts",
-  "2007": "Agribusiness",
-  "2031": "Science (Honours)",
-  "2033": "Social Science (Honours)",
-  "2040": "Journalism",
-  "2041": "Journalism (Honours)",
-  "2052": "Arts (Honours)",
-  "2063": "Regional and Town Planning",
-  "2066": "Arts / Education (Secondary)",
-  "2102": "Journalism / Arts",
-  "2129": "Business Management (Honours)",
-  "2131": "Commerce (Honours)",
-  "2132": "Economics (Honours)",
-  "2139": "Advanced Business (Honours)",
-  "2140": "Advanced Finance and Economics (Honours)",
-  "2142": "Arts / Laws (Honours)",
-  "2171": "Business Management",
-  "2175": "Business Management / Arts",
-  "2180": " of Business Management / Commerce",
-  "2181": "Business Management / Economics",
-  "2235": "Information Technology (Honours)",
-  "2237": "Communication (Honours)",
-  "2241": "Nursing",
-  "2243": "Nursing (Honours)",
-  "2252": "Health Sciences",
-  "2253": "Health Sciences (Honours)",
-  "2261": "Midwifery",
-  "2264": "Human Services (Honours)",
-  "2266": "Midwifery (Honours)",
-  "2290": "Nursing / Midwifery",
-  "2293": "Architectural Design",
-  "2298": "Business Management / Education (Secondary)",
-  "2299": "Business Management / Information Technology",
-  "2306": "Education (Primary)",
-  "2312": "Education (Secondary)",
-  "2316": "International Studies",
-  "2317": "International Studies (Honours)",
-  "2320": "Diploma in Arts",
-  "2334": "Business Management / Laws (Honours)",
-  "2335": "Business Management / Science",
-  "2336": "Commerce",
-  "2337": "Commerce / Arts",
-  "2338": "Commerce / Economics",
-  "2339": "Commerce / Information Technology",
-  "2350": "Engineering (Honours) and Master of Engineering",
-  "2354": "Science (Honours) - Gatton",
-  "2355": "Music (Honours)",
-  "2357": "Music (Honours) / Education (Secondary)",
-  "2367": "Dental Science (Honours)",
-  "2368": "Occupational Therapy (Honours)",
-  "2369": "Physiotherapy (Honours)",
-  "2370": "Speech Pathology (Honours)",
-  "2371": "Exercise and Sport Sciences (Honours)",
-  "2372": "Health, Sport and Physical Education (Honours)",
-  "2373": "Pharmacy (Honours)",
-  "2376": "Environmental Management (Honours)",
-  "2378": "Veterinary Science (Honours)",
-  "2379": "Psychological Science (Honours)",
-  "2380": "Education (Primary) (Honours)",
-  "2381": "Regional and Town Planning (Honours)",
-  "2382": "Social Work (Honours)",
-  "2387": "Veterinary Technology",
-  "2388": "Wildlife Science",
-  "2392": "Agribusiness / Wildlife Science",
-  "2405": "Music (Honours) / Arts",
-  "2413": "Clinical Exercise Physiology (Honours)",
-  "2414": "Advanced Humanities (Honours)",
-  "2415": "Biomedical Science",
-  "2417": "Equine Science (Honours)",
-  "2419": "Wildlife Science (Honours)",
-  "2421": "Mathematics (Honours)",
-  "2422": "Veterinary Technology (Honours)",
-  "2423": "Biomedical Science (Honours)",
-  "2448": "Agricultural Science",
-  "2449": "Agribusiness / Agricultural Science",
-  "2450": "Agricultural Science (Honours)",
-  "2451": "Computer Science",
-  "2452": "Computer Science (Honours)",
-  "2453": "Information Technology",
-  "2454": "Design",
-  "2455": "Engineering (Honours)",
-  "2456": "Biotechnology",
-  "2457": "Biotechnology (Honours)",
-  "2458": "Environmental Science",
-  "2459": "Environmental Science (Honours)",
-  "2460": "Mathematics",
-  "2461": "Science",
-  "2463": "Computer Science / Business Management",
-  "2464": "Computer Science / Commerce",
-  "2465": "Commerce / Laws (Honours)",
-  "2466": "Commerce / Science",
-  "2467": "Economics",
-  "2468": "Economics / Arts",
-  "2469": "Economics / Laws (Honours)",
-  "2470": "Economics / Science",
-  "2471": "Laws (Honours)",
-  "2472": "Science / Laws (Honours)",
-  "2473": "Tourism, Hospitality and Event Management"
-}
+			<!-- Available Courses -->
+			<div id="Elective" ondrop="drop(event)" ondragover="allowDrop(event)">
+				<h2>Available Elective Courses</h2>
+				
+			</div>
+		</div>
+	</div>
+</body>
 
+<script label="SCRIPT FOR INTIIAL RENDER">
+	/**
+	 * 
+	 * Code for the divs etc
+	*/
+////////////////////////////////////////////////////////////
+	// populating the select year
+   
+
+	let lists = [[], [], [], [], [],[], [], [], [], [],[], [], [], [], []]
+	let dateDropdown = document.getElementById('startingYear');
+	let planDiv = document.getElementsByClassName("semesters")[0];
+
+
+	let currentYear = new Date().getFullYear();
+	let latestYear = currentYear+9;
+
+	let i = 0;
+	while (currentYear <= latestYear) {
+	let dateOption = document.createElement('option');
+	dateOption.text = currentYear+1;
+	dateOption.value = currentYear+1;
+	let yearDiv = document.createElement('div');
+	yearDiv.id = currentYear;
+	
+	let yearTitle = document.createElement('h2');
+	
+	yearTitle.innerHTML = currentYear;
+	yearDiv.appendChild(yearTitle);
+	let semsDiv = document.createElement('div');
+	semsDiv.classList.add('semDiv');
+	yearDiv.appendChild(semsDiv);
+	if (currentYear == 2024) {
+			yearTitle.style.marginTop = 0;
+	}
+	
+	
+	let sem1Div = document.createElement('div');
+	let sem2Div = document.createElement('div');
+
+	sem1Div.textContent = "Semester 1";
+	sem1Div.style.float = "left"
+	sem2Div.style.float= "right"
+	sem2Div.textContent = "Semester 2"; 
+
+	sem1Div.classList.add("semester");
+	sem2Div.classList.add("semester");
+	
+	
+
+	sem1Div.ondrop = drop;
+	
+	sem2Div.ondrop = drop;
+
+	
+	sem1Div.ondragover = allowDrop;
+	sem2Div.ondragover = allowDrop;
+
+	sem1Div.ondragleave = dragLeave;
+	sem2Div.ondragleave = dragLeave;
+
+	sem1Div.id = "semester" + i;
+	i++;
+	sem2Div.id = "semester" + i;
+	i++;
+
+	
+	dateDropdown.add(dateOption);
+	planDiv.appendChild(yearDiv);
+	semsDiv.appendChild(sem1Div);
+	semsDiv.appendChild(sem2Div);
+
+	
+	currentYear += 1;
+	}
+
+	// end of semesters
+
+///////////////////////////////////////////////////////////
+
+// DRAGGING FUNCTIONS 
+	// Add event listeners to all '.course' ie each course dragable
+	document.querySelectorAll('.course').forEach(course => {
+		course.addEventListener('dragstart', drag); // listen for dragging
+		course.addEventListener('dragend', function() { // end of drag
+			this.classList.remove('dragging');
+		});
+	});
+
+	// runs when event is picked up
+	function drag(event) { 
+		event.dataTransfer.setData('text', event.target.id);
+		// save the data of the id of the one picked up
+		event.target.classList.add('dragging');
+		// give it the dragging class
+	}
+
+	// runs when event is being dragged over
+	function allowDrop(event) {
+		event.preventDefault();
+		event.currentTarget.classList.add('over');
+		// add the over class
+	}
+	
+	function dragLeave(event) {
+		event.preventDefault();
+		event.currentTarget.classList.remove('over');
+	}
+	function drop(event) {
+		event.preventDefault();
+		const data = event.dataTransfer.getData('text'); // text of the box being dragged/id
+		const course = document.getElementById(data); // the course box being dragged
+		const semester = event.currentTarget; // the place we drop to
+		console.log(course.innerText.toString)
+
+		if (semester.id === 'semester0' && semester.querySelectorAll('.course').length >= 4) {
+			alert('You cannot have more than 4 courses in the first semester of the first year.');
+		} else if (semester.id != 'Elective' && semester.id != 'relevant' && semester.querySelectorAll('.course').length >= 5) {
+			alert('You cannot have more than 5 courses in a semester.');
+		} else {
+			 // otherwise we are doing CHECKS and adding to semester
+			const response = fetch('http://127.0.0.1:5000/check', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+				},
+				
+				body: JSON.stringify({value : course.innerText, place : semester.id , list : lists})
+			})
+			.then(response => response.json())
+			.then(data => {console.log(data); semester.appendChild(course); lists = data.data;})
+		}
+		
+		semester.classList.remove('over');
+		course.classList.remove('dragging');
+	}
+
+/// SETS THE YEAR HEADINGS
+	const changeYears = function() {
+		const startingYear = this.value ;
+		const semesterContainers = document.querySelectorAll('.semesters h2');
+
+		semesterContainers.forEach((container, index) => {
+			const year = parseInt(startingYear) + index;
+			container.textContent = year;
+		});
+		
+	};
+	document.getElementById('startingYear').addEventListener('change', changeYears);
+
+//// RANDOM INITIALIZING /// 
+	// get degree courses from python
+	const degreeCourses =JSON.parse('{{degreeList | tojson}}'); 
 
 for (const courseCode in degreeCourses) {
 document.getElementById("courseSelect").innerHTML += `<option value="${courseCode}">${degreeCourses[courseCode]}</option>`;
 }
+// ad ad thingy
+
+// SERVER REQUESTS ETC  ///////////////////////////////////////////////////////////
 
 // Add event listener to the select element to get the selected course code
-// Add event listener to the select element to get the selected course code
-// Add event listener to the select element to get the selected course code
-document.getElementById('courseSelect').addEventListener('change', function() {
-    const ProgramCode = this.value;
+	const update = function() {
+		let tthis = document.getElementById('courseSelect');
+	const ProgramCode = tthis.value;
 
-    // Make a fetch request to the server-side API endpoint
-    const response = fetch('http://127.0.0.1:5000/api', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        
-        body: JSON.stringify({ProgramCode: ProgramCode, 
-            startingYear: document.getElementById('starting-year').value,
-        Load: document.getElementById('laod').value})
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Clear all children before appending new courses
-        document.getElementById("cou").innerHTML = '';
-        for (const Avcourse in data.AvailiableCourses) {
-            if (data.AvailiableCourses[Avcourse].length < 9){
-                const newCourse = document.createElement('div');
-            newCourse.classList.add('course');
-            newCourse.classList.add('optional');
-            newCourse.textContent = data.AvailiableCourses[Avcourse];
-            newCourse.id = newCourse.textContent;
-            newCourse.draggable = true;
-            newCourse.addEventListener('dragstart', drag);
-            newCourse.addEventListener('dragend', function() {
-                this.classList.remove('dragging');
-            });
-            // Append the new course to the availiable courses
-            document.getElementById("cou").appendChild(newCourse);
-            }
-        }
-        int = 0;
-        for (year in (data.Plan)){
-            for(semester in data.Plan[year]){
-                int +=1
-                document.getElementById(`semester${int}`).innerHTML = '';
-                document.getElementById(`semester${int}`).textContent = "Semester " + int;
-                for(course in data.Plan[year][semester]){
-                    const newCourse = document.createElement('div');
-                    newCourse.classList.add('course');
-                    newCourse.classList.add('required')
-                    newCourse.draggable = true;
-                    newCourse.id =  data.Plan[year][semester][course];
-                    newCourse.textContent = data.Plan[year][semester][course];
-                    newCourse.addEventListener('dragstart', drag);
-                    newCourse.addEventListener('dragend', function() {
-                        this.classList.remove('dragging');
-                    });
-                    
-                    document.getElementById(`semester${int}`).appendChild(newCourse);
-                }
-                
-            }
-        }
-        // Re-add drag and drop event listeners to the courses
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
-});
+	// Make a fetch request to the server-side API endpoint
+	const response = fetch('http://127.0.0.1:5000/api', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		
+		body: JSON.stringify({ProgramCode: ProgramCode, 
+			startingYear: document.getElementById('startingYear').value,
+		Load: document.getElementById('load').value})
+	})
+	.then(response => response.json())
+	.then(data => {
+		// Clear all children before appending new courses
+		document.getElementById("Elective").innerHTML = "<h2>Available Elective Courses</h2>"; // clearing Core courses
+		document.getElementById("relevant").innerHTML = "<h2>Core Course Choices</h2>";
+		
+		
+
+			// for all the core courses
+		for (const Avcourse in data.CoreCourses) {
+			if (data.CoreCourses[Avcourse].length == 1){
+				// <div class="course" id="CSSE2001" draggable="true">CSSE2001</div>
+				const newCourse = document.createElement('div');
+			newCourse.classList.add('course');
+			newCourse.textContent = data.CoreCourses[Avcourse];
+			newCourse.id = newCourse.textContent;
+			newCourse.draggable = true;
+			newCourse.addEventListener('dragstart', drag);
+			newCourse.addEventListener('dragend', function() {
+				this.classList.remove('dragging');
+			});
+			// Append the new course to the Core courses
+			document.getElementById("relevant").appendChild(newCourse);
+			}
+			else {
+				// otherwise the choosing things a or b stat1201 or stat1301
+				const newD = document.createElement('div');
+					newD.classList.add("course");
+					newD.classList.add("choice");
+					newD.id = "CHOICE" + Avcourse;
+					newD.draggable = "false";
+
+					const newS = document.createElement('select');
+					newS.onchange = function(event) {return makeChoice(event.target);};
+					
+					let rel = document.getElementById("relevant");
+					rel.appendChild(newD);
+					newD.appendChild(newS);
+				for (const optn in data.CoreCourses[Avcourse]) {
+					let oCode = data.CoreCourses[Avcourse][optn];
+					//  data.CoreCourses[Avcourse]
+					// <div class="course choice" id="CHOICE1" draggable=""><select onchange="makeChoice(this)"><option value="CSSE1001">CSSE1001</option>
+					// <option value="ENGI1100">ENGI1100</option></select></div>
+					let opt = document.createElement('option');
+					opt.value = oCode;
+					opt.innerHTML = oCode;
+					newS.appendChild(opt);
+				}
+			}
+		}
+
+		// for all the electives
+		const elecDiv = document.getElementById("Elective");
+		elecDiv.innerHTML = "<h2>Available Elective Courses</h2>";
+
+		for (const Elec in data.electives) {
+			// <div class="course core" draggable="true" id="CSSE2010">CSSE2010</div>
+			let newDrag = document.createElement('div');
+			newDrag.classList.add("course");
+			newDrag.classList.add("elective");
+			newDrag.draggable = "true";
+			newDrag.id = data.electives[Elec];
+			newDrag.innerHTML = newDrag.id;
+			newDrag.addEventListener('dragstart', drag);
+			newDrag.addEventListener('dragend', function() {
+				this.classList.remove('dragging');
+			});
+
+			elecDiv.appendChild(newDrag);
+		}
+		int = 0;
+		for (year in (data.Plan)){
+			for (semester in data.Plan[year]){
+			
+				let sem = document.getElementById(`semester${int}`);
+				sem.innerHTML = '';
+				sem.textContent = "Semester " + ((int) % 2 + 1);
+				for(course in data.Plan[year][semester]){
+					const newCourse = document.createElement('div');
+					newCourse.classList.add('course');
+					newCourse.classList.add('core')
+					newCourse.draggable = true;
+					newCourse.id =  data.Plan[year][semester][course];
+					newCourse.textContent = data.Plan[year][semester][course];
+					newCourse.addEventListener('dragstart', drag);
+					newCourse.addEventListener('dragend', function() {
+						this.classList.remove('dragging');
+					});
+					
+					
+					sem.appendChild(newCourse);
+					
+				}
+				var children = sem.children;
+				for (var i = 0; i < children.length; i++) {
+				var tableChild = children[i];
+				console.log(tableChild);
+				console.log(lists[int].push(tableChild.innerText))
+				}
+				console.log(lists)
+				int ++;
+
+				
+			}
+		}
+		// Re-add drag and drop event listeners to the courses
+	})
+	.catch((error) => {
+		console.error('Error:', error);
+	});
+}
+
+
+
+document.getElementById('courseSelect').addEventListener('change', update);
+document.getElementById('load').addEventListener('change', update);
+
+
+//// CHOICES
+
+
+
+const makeChoice = function(item) {
+	console.log(item);
+	let val = [...item.options].map(o => o.value)
+	let courseCode = item.options[item.selectedIndex].text;
+	let dragg = null;
+	val.forEach(function(code) {
+	let draggable = document.getElementById(code);
+	
+	if (draggable != null) {
+		dragg = draggable;
+	
+	}});
+	
+	dragg.id = courseCode;
+	dragg.innerHTML = courseCode;
+}
 
 </script>
 
-</body>
 </html>
