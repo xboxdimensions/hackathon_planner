@@ -1,4 +1,5 @@
-# hackathon_planner
+# UQ Program Planner
+A program planner made by First-Years for First-Years (and everyone else).
 
 ## Initialize and Run the Flask Project
 
