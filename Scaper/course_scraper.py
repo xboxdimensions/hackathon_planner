@@ -3,6 +3,7 @@ from Scaper.courseData import relatedCourses, sidebar, UnitAmount, durationLengt
 
 import requests
 import json
+import re
 from pprint import pprint
 from bs4 import BeautifulSoup
 
@@ -33,75 +34,87 @@ getNames
 # FUNCTION 1) GIVE programCode - return (courses, plans)
 
 
+def _extract_program_requirements(html: str) -> dict:
+    """Extract UQ's embedded programRequirements object.
+
+    UQ changed the page from ``programRequirements: {...}`` to
+    ``"programRequirements": {...}``.  JSONDecoder.raw_decode lets us
+    parse either form without depending on the rest of the page or on
+    JavaScript formatting.
+    """
+    marker = re.search(r'(?:"programRequirements"|programRequirements)\s*:\s*', html)
+    if marker is None:
+        raise ValueError("UQ program requirements data was not found in the response")
+
+    requirements, _ = json.JSONDecoder().raw_decode(html[marker.end():])
+    if not isinstance(requirements, dict):
+        raise ValueError("UQ program requirements data was not a JSON object")
+    return requirements
+
+
+def _collect_program_rows(value):
+    """Yield course codes and course-choice tuples from nested UQ rule data."""
+    if isinstance(value, dict):
+        row_type = value.get("rowType")
+        if row_type == "CurriculumReference":
+            code = value.get("curriculumReference", {}).get("code")
+            if code:
+                yield code
+            return
+        if row_type == "EquivalenceGroup":
+            choices = tuple(
+                choice.get("curriculumReference", {}).get("code")
+                for choice in value.get("equivalenceGroup", [])
+                if choice.get("curriculumReference", {}).get("code")
+            )
+            if choices:
+                yield choices
+            return
+        for child in value.values():
+            yield from _collect_program_rows(child)
+    elif isinstance(value, list):
+        for child in value:
+            yield from _collect_program_rows(child)
+
+
 def scrapePlansAndCore(program_code: str) -> dict:
-    print(program_code)
+    """Fetch and normalize a UQ program's core courses and electives."""
     headers = requests.utils.default_headers()
-    headers.update({'User-Agent': 'My User Agent 1.0'})
+    headers.update({'User-Agent': 'Mozilla/5.0'})
     url = f"https://my.uq.edu.au/programs-courses/requirements/program/{program_code}/2024"
-    html = requests.get(url, headers=headers).text
-    out = html
-    s = out
+    response = requests.get(url, headers=headers, timeout=30)
+    response.raise_for_status()
 
-    out = out.split("programRequirements: ")[1]
-    out = out.split(",\n routes: ")[0]
-    j = json.loads(out)
-    if not j:
-        return dict()
-	# pprint(j['payload']['components'][1]['payload'])
-	# out = json.loads(out)
-    # with open("output.txt", "w") as f:
-    #     json.dump(j['payload']['components'][1]['payload'], f)
+    requirements = _extract_program_requirements(response.text)
+    components = requirements.get("payload", {}).get("components", [])
+    rules_component = next(
+        (
+            component for component in components
+            if isinstance(component.get("payload"), dict)
+            and isinstance(component["payload"].get("body"), list)
+        ),
+        None,
+    )
+    if rules_component is None:
+        raise ValueError("UQ program requirements did not contain a rules component")
 
-    payload = j['payload']['components'][1]['payload']['body']
-    content = [tab['body'] for tab in payload]
+    data = {"core": set(), "electives": set(), "plans": set()}
+    parts = rules_component["payload"]["body"]
 
-    data = {'core': set(), 'electives': set(), 'plans': set()}
-    for i, tab in enumerate(content):
-        if len(tab) > 1:
-            if 'body' in tab[1]:
-                # there are sub sub sections
-                tab = tab[0]['body']
-        tab_courses = set()
-        if tab:
+    for index, part in enumerate(parts):
+        rows = set(_collect_program_rows(part.get("body", [])))
+        if index == 0:
+            data["core"] = rows
+            continue
 
-            for course in tab:
-                print("------")
-                print(course)
-                print("------")
-                if 'rowType' not in course:
-                    # print(course)
-                    continue
-                # print(course)
-                # print()
-                # print(course['rowType']) #, course['name'])
-                # try:
-                #     print(course['equivalenceGroup'])
-                #     print(course['rowType'] == "EquivalenceGroup")
-                # except:
-                #     pass
-                if course['rowType'] == "CurriculumReference":
-                    # a single course
-                    # print(course['curriculumReference']['code'])
-                    print("=" * 10)
-                    print(course['curriculumReference']['code'])
-                    print("=" * 10)
-                    tab_courses.add(course['curriculumReference']['code'])
-                elif course['rowType'] == "EquivalenceGroup":
-                    # a choice
-                    tab_courses.add(tuple(choice['curriculumReference']['code'] for choice in course['equivalenceGroup']))
-                else:
-                    pass # wild card items
-        print(tab_courses)
-        if i == 0:
-            data['core'] = tab_courses
-        if tab_courses and len(list(tab_courses)[0]) == 10:
-            data['plans'] = tab_courses
-        elif tab_courses:
-            for course in tab_courses:
-                if course not in data['core'] and len(course) == 8:
-                    data['electives'].add(course)
-    print(data['electives'])           
-    return {key : list(s) for key, s in data.items()}
+        for row in rows:
+            if isinstance(row, str) and len(row) == 10:
+                data["plans"].add(row)
+            elif isinstance(row, str) and len(row) == 8:
+                data["electives"].add(row)
+
+    data["electives"] -= {course for course in data["core"] if isinstance(course, str)}
+    return {key: sorted(value, key=str) for key, value in data.items()}
 # def course_finder(program_code: int) -> tuple[dict, dict]:
 #     """
 #     Gets basic course information in one lookup

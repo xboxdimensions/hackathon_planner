@@ -24,8 +24,6 @@ def generateOptions(UserOptions={}, ProgramOptions={}):
 	"""
 	# initial plan
 	load = 2 if UserOptions['Load'] == 'part' else 4
-	print(UserOptions['Load'])
-	print(load)
 	plan = Plan(int(UserOptions['startingYear']), load)
 	requirements = ProgramOptions["Required"].copy()
 

@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 
 import sys, os
-from pprint import pprint
+import re
 sys.path.insert(0, os.path.abspath('../'))
 from GenerationComponent.generate import generateOptions
 from Scaper.course_scraper import scrapePlansAndCore, courseData
@@ -35,7 +35,6 @@ def generate():
 
     # Get the program options & data
     info = scrapePlansAndCore(data['ProgramCode'])
-    pprint(info)
     required = info['core']
     electives = info['electives']
     programOptions = {"Required": required, "ProgramElectives":electives}
@@ -44,9 +43,36 @@ def generate():
 
     #
     userPlan = generateOptions(data, programOptions)
-    rtrn = {"electives":electives+userPlan.get_extra('extra'),"CoreCourses":userPlan.get_extra('required'), "Plan":userPlan.get_return()}
-    print(rtrn)
+    choice_codes = [
+        code
+        for choice in userPlan.get_extra('required')
+        if isinstance(choice, (list, tuple))
+        for code in choice
+    ]
+    rtrn = {
+        "plans": info.get('plans', []),
+        "coreChoiceDetails": courseData(choice_codes) if choice_codes else {},
+        "electives": electives + userPlan.get_extra('extra'),
+        "CoreCourses": userPlan.get_extra('required'),
+        "Plan": userPlan.get_return(),
+        "errors": userPlan.get_extra('error'),
+    }
     return rtrn
+
+
+
+
+@app.route("/course/<course_code>")
+def course_info(course_code):
+    """Return live metadata for an individual course card."""
+    code = course_code.upper()
+    if not re.fullmatch(r"[A-Z]{4}[0-9]{4}", code):
+        return {"error": "Invalid course code"}, 400
+
+    data = courseData([code])
+    if code not in data:
+        return {"error": "Course not found"}, 404
+    return data[code]
 
 
 
@@ -98,15 +124,57 @@ def check_yes(value, sem):
 @app.route("/check", methods=["POST"])
 def check():
     data = request.get_json()
-    value  = data["value"]
-    place = int(data["place"][-1])
-    lists = request.get_json()['list']
-    if check_no(value, place) and not (any(value in sublist for sublist in lists)):
-        if not check_yes(value, place):
-            return {"status": "no", "data": lists }
-        lists[place].append(value)
-    print(lists)
-    return {"status": "OK" , "data": lists}
+    value = str(data.get("value", "")).upper()
+    place_match = re.fullmatch(r"semester(\d+)", str(data.get("place", "semester0")))
+    place = int(place_match.group(1)) if place_match else 0
+    lists = data.get("list") or []
+
+    if len(value) != 8:
+        return {"status": "no", "message": "Invalid course code.", "data": lists}
+
+    meta = courseData([value]).get(value)
+    if not meta:
+        return {"status": "no", "message": "Could not validate against current UQ data.", "data": lists}
+
+    def flatten_choice(expr):
+        if isinstance(expr, str):
+            return [expr] if len(expr) == 8 else []
+        if isinstance(expr, tuple):
+            return flatten_choice(expr[0]) if expr else []
+        if isinstance(expr, list):
+            selected = []
+            for item in expr:
+                selected.extend(flatten_choice(item))
+            return selected
+        return []
+
+    semester_number = (place % 2) + 1
+    if semester_number not in meta.get("Offerings", []):
+        return {"status": "no", "message": f"Not offered in Semester {semester_number}.", "data": lists}
+
+    prior = set()
+    for index, sem in enumerate(lists):
+        if index < place:
+            prior.update(sem)
+
+    needed = set(flatten_choice(meta.get("Prerequisite", [])))
+    missing = sorted(course for course in needed if course not in prior)
+    if missing:
+        return {"status": "no", "message": f"Prerequisites not met: {', '.join(missing)}.", "data": lists}
+
+    earlier_courses = [course for sem in lists[:place] for course in sem]
+    for earlier in earlier_courses:
+        earlier_meta = courseData([earlier]).get(earlier, {})
+        earlier_needed = set(flatten_choice(earlier_meta.get("Prerequisite", [])))
+        if value in earlier_needed:
+            return {
+                "status": "no",
+                "message": f"{value} cannot be placed after {earlier} because {earlier} requires it.",
+                "data": lists,
+            }
+
+    lists[place].append(value)
+    return {"status": "OK", "message": f"OK · Offered in Semester {semester_number}", "data": lists}
 
 @app.route("/create",methods=["POST"])
 def create():

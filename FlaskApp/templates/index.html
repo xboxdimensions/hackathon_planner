@@ -116,9 +116,57 @@
 			flex-grow: 1;
 		}
 
-        .semester.over {
+		.semester.over {
             border-color: purple;
         }
+
+		.semester.overloaded {
+			border-color: #c0392b;
+			background-color: #fff0f0;
+		}
+
+		.semester-label {
+			display: block;
+			color: #4b0082;
+		}
+
+		.semester-meta {
+			display: block;
+			font-size: 12px;
+			color: #666;
+			margin-bottom: 6px;
+		}
+
+		.plan-status {
+			background: #fff8df;
+			color: #5d4b00;
+			border-left: 4px solid #e0ad00;
+			border-radius: 4px;
+			padding: 10px;
+			margin: 10px 0;
+			font-size: 14px;
+		}
+
+		#courseInfo {
+			background-color: #fff;
+			border-radius: 8px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			color: #333;
+			padding: 12px;
+			margin-bottom: 20px;
+			font-size: 14px;
+			text-align: left;
+			min-height: 45px;
+		}
+
+		#courseInfo h3 {
+			color: #4b0082;
+			margin: 0 0 6px;
+		}
+
+		#courseInfo p {
+			margin: 5px 0;
+		}
 	
 		.rhs {
 			width: 30%;
@@ -267,6 +315,9 @@
 		<div class="plan">
 			<!-- Semesters -->
 			<h1>Your Plan</h1>
+			<div id="planStatus" class="plan-status">
+				Choose a program to generate a plan. Generated placements follow scraped prerequisites and semester offerings. Overloading is allowed but marked.
+			</div>
 			<div class="semesters">
 			</div>
 		</div>		
@@ -292,7 +343,10 @@
 			<!-- Available Courses -->
 			<div id="Elective" ondrop="drop(event)" ondragover="allowDrop(event)">
 				<h2>Available Elective Courses</h2>
-				
+			</div>
+
+			<div id="courseInfo">
+				<strong>Select a course to see its live UQ details.</strong>
 			</div>
 		</div>
 	</div>
@@ -314,6 +368,24 @@
 
 	let currentYear = new Date().getFullYear();
 	let latestYear = currentYear+9;
+
+	const recommendedLoad = function() {
+		return document.getElementById('load').value === 'part' ? 2 : 4;
+	};
+
+	function refreshSemesterStatus(semester) {
+		const recommended = recommendedLoad();
+		const count = semester.querySelectorAll('.course').length;
+		const meta = semester.querySelector('.semester-meta');
+		if (meta) {
+			meta.textContent = `${count}/${recommended} courses · recommended ${recommended}`;
+		}
+		semester.classList.toggle('overloaded', count > recommended);
+	}
+
+	function refreshAllSemesterStatuses() {
+		document.querySelectorAll('.semester').forEach(refreshSemesterStatus);
+	}
 
 	let i = 0;
 	while (currentYear <= latestYear) {
@@ -338,10 +410,10 @@
 	let sem1Div = document.createElement('div');
 	let sem2Div = document.createElement('div');
 
-	sem1Div.textContent = "Semester 1";
+	sem1Div.innerHTML = '<strong class="semester-label">Semester 1</strong><small class="semester-meta"></small>';
 	sem1Div.style.float = "left"
 	sem2Div.style.float= "right"
-	sem2Div.textContent = "Semester 2"; 
+	sem2Div.innerHTML = '<strong class="semester-label">Semester 2</strong><small class="semester-meta"></small>';
 
 	sem1Div.classList.add("semester");
 	sem2Div.classList.add("semester");
@@ -363,6 +435,8 @@
 	i++;
 	sem2Div.id = "semester" + i;
 	i++;
+	refreshSemesterStatus(sem1Div);
+	refreshSemesterStatus(sem2Div);
 
 	
 	dateDropdown.add(dateOption);
@@ -408,36 +482,87 @@
 	}
 	function drop(event) {
 		event.preventDefault();
-		const data = event.dataTransfer.getData('text'); // text of the box being dragged/id
-		const course = document.getElementById(data); // the course box being dragged
-		const semester = event.currentTarget; // the place we drop to
-		console.log(course.innerText.toString)
+		const data = event.dataTransfer.getData('text');
+		const course = document.getElementById(data);
+		const semester = event.currentTarget;
+		if (!course) return;
 
-		if (semester.id === 'semester0' && semester.querySelectorAll('.course').length >= 4) {
-			alert('You cannot have more than 4 courses in the first semester of the first year.');
-		} else if (semester.id != 'Elective' && semester.id != 'relevant' && semester.querySelectorAll('.course').length >= 5) {
-			alert('You cannot have more than 5 courses in a semester.');
-		} else if (semester.id != 'Elective' && semester.id != 'relevant') {
-			 // otherwise we are doing CHECKS and adding to semester
-			 document.body.style.cursor = 'wait';
-			const response = fetch('http://127.0.0.1:5000/check', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-				},
-				
-				body: JSON.stringify({value : course.innerText, place : semester.id , list : lists})
+		if (semester.classList.contains('semester')) {
+			document.body.style.cursor = 'wait';
+			fetch('/check', {
+				method: 'POST',
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify({
+					value: course.innerText,
+					place: semester.id,
+					list: lists
+				})
 			})
 			.then(response => response.json())
-			.then(data => {console.log(data); semester.appendChild(course); lists = data.data; document.body.style.cursor = 'default';})
-        }
-		else {
+			.then(data => {
+				if (data.status !== 'OK') {
+					alert(data.message || 'This course cannot be placed here.');
+					return;
+				}
+				semester.appendChild(course);
+				lists = data.data;
+				refreshSemesterStatus(semester);
+			})
+			.catch(error => alert(`Could not validate course: ${error.message}`))
+			.finally(() => {
+				document.body.style.cursor = 'default';
+			});
+		} else {
 			semester.appendChild(course);
 		}
-		
+
 		semester.classList.remove('over');
 		course.classList.remove('dragging');
 	}
+	function prerequisiteText(value) {
+		if (!value || (Array.isArray(value) && value.length === 0)) return 'None listed';
+		if (typeof value === 'string') return value;
+		if (Array.isArray(value)) {
+			return value.map(prerequisiteText).join(' and ');
+		}
+		return String(value);
+	}
+
+	function showCourseInfo(code) {
+		const panel = document.getElementById('courseInfo');
+		panel.textContent = 'Loading live UQ course details...';
+		fetch(`/course/${encodeURIComponent(code)}`)
+			.then(response => {
+				if (!response.ok) throw new Error(`Course lookup failed (${response.status})`);
+				return response.json();
+			})
+			.then(data => {
+				panel.replaceChildren();
+				const heading = document.createElement('h3');
+				heading.textContent = `${code} — ${data.Name || 'Course details'}`;
+				panel.appendChild(heading);
+
+				const summary = document.createElement('p');
+				const offerings = (data.Offerings || []).map(term => `Semester ${term}`).join(', ') || 'Not listed';
+				summary.textContent = `${data.Units || '?'} units · Offered: ${offerings}`;
+				panel.appendChild(summary);
+
+				const prerequisite = document.createElement('p');
+				prerequisite.textContent = `Prerequisites: ${prerequisiteText(data.Prerequisite)}`;
+				panel.appendChild(prerequisite);
+			})
+			.catch(error => {
+				panel.textContent = `Course details unavailable: ${error.message}`;
+			});
+	}
+
+	document.addEventListener('click', function(event) {
+		const card = event.target.closest('.course');
+		if (card && !event.target.closest('select') && !card.id.startsWith('CHOICE')) {
+			showCourseInfo(card.id);
+		}
+	});
+
   function addPls() {
 	// The add button for courses
 	      const userInput= document.getElementById("cCodeInput");
@@ -493,7 +618,7 @@ document.getElementById("courseSelect").innerHTML += `<option value="${courseCod
 
 	// Make a fetch request to the server-side API endpoint
 	document.body.style.cursor = 'wait';
-	const response = fetch('http://127.0.0.1:5000/api', {
+	const response = fetch('/api', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
@@ -503,8 +628,34 @@ document.getElementById("courseSelect").innerHTML += `<option value="${courseCod
 			startingYear: document.getElementById('startingYear').value,
 		Load: document.getElementById('load').value})
 	})
-	.then(response => response.json())
+	.then(response => {
+		if (!response.ok) {
+			throw new Error(`Planner request failed (${response.status})`);
+		}
+		return response.json();
+	})
 	.then(data => {
+		document.body.style.cursor = 'default';
+
+		const planSelect = document.getElementById('plan');
+		planSelect.innerHTML = '<option selected>Select Plan</option>';
+		for (const planCode of (data.plans || [])) {
+			const planOption = document.createElement('option');
+			planOption.value = planCode;
+			planOption.textContent = planCode;
+			planSelect.appendChild(planOption);
+		}
+
+		const planStatus = document.getElementById('planStatus');
+		if ((data.errors || []).length > 0) {
+			planStatus.textContent = `Warning: ${data.errors.join(', ')} could not be scheduled. Other generated placements follow scraped prerequisites and offerings. Overloading is allowed but marked.`;
+		} else {
+			planStatus.textContent = 'Generated plan follows scraped prerequisites and semester offerings. Manual moves are checked against live UQ data. Overloading is allowed but marked.';
+		}
+
+		// Reset client-side semester state before rendering a new plan.
+		lists = Array.from({length: 15}, () => []);
+
 		// Clear all children before appending new courses
 		document.getElementById("Elective").innerHTML = "<h2>Available Elective Courses</h2>"; // clearing Core courses
 		document.getElementById("relevant").innerHTML = "<h2>Core Course Choices</h2>";
@@ -512,7 +663,7 @@ document.getElementById("courseSelect").innerHTML += `<option value="${courseCod
 		
 
 			// for all the core courses
-		for (const Avcourse in data.CoreCourses) {
+		for (const Avcourse in (data.CoreCourses || [])) {
 			if (data.CoreCourses[Avcourse].length == 1){
 				// <div class="course" id="CSSE2001" draggable="true">CSSE2001</div>
 				const newCourse = document.createElement('div');
@@ -535,6 +686,10 @@ document.getElementById("courseSelect").innerHTML += `<option value="${courseCod
 					newD.id = "CHOICE" + Avcourse;
 					newD.draggable = "false";
 
+					const choiceHeading = document.createElement('div');
+					choiceHeading.textContent = 'Choose one required course:';
+					newD.appendChild(choiceHeading);
+
 					const newS = document.createElement('select');
 					newS.onchange = function(event) {return makeChoice(event.target);};
 					
@@ -547,8 +702,9 @@ document.getElementById("courseSelect").innerHTML += `<option value="${courseCod
 					// <div class="course choice" id="CHOICE1" draggable=""><select onchange="makeChoice(this)"><option value="CSSE1001">CSSE1001</option>
 					// <option value="ENGI1100">ENGI1100</option></select></div>
 					let opt = document.createElement('option');
+					const details = (data.coreChoiceDetails || {})[oCode] || {};
 					opt.value = oCode;
-					opt.innerHTML = oCode;
+					opt.textContent = details.Name ? `${oCode} — ${details.Name}` : oCode;
 					newS.appendChild(opt);
 				}
 			}
@@ -559,7 +715,7 @@ document.getElementById("courseSelect").innerHTML += `<option value="${courseCod
 		const elecDiv = document.getElementById("Elective");
 		elecDiv.innerHTML = "<h2>Available Elective Courses</h2>";
 
-		for (const Elec in data.electives) {
+		for (const Elec in (data.electives || [])) {
 			// <div class="course core" draggable="true" id="CSSE2010">CSSE2010</div>
 			let newDrag = document.createElement('div');
 			newDrag.classList.add("course");
@@ -579,8 +735,7 @@ document.getElementById("courseSelect").innerHTML += `<option value="${courseCod
 			for (semester in data.Plan[year]){
 			
 				let sem = document.getElementById(`semester${int}`);
-				sem.innerHTML = '';
-				sem.textContent = "Semester " + ((int) % 2 + 1);
+				sem.innerHTML = `<strong class="semester-label">Semester ${(int) % 2 + 1}</strong><small class="semester-meta"></small>`;
 				for(course in data.Plan[year][semester]){
 					const newCourse = document.createElement('div');
 					newCourse.classList.add('course');
@@ -597,13 +752,11 @@ document.getElementById("courseSelect").innerHTML += `<option value="${courseCod
 					sem.appendChild(newCourse);
 					
 				}
-				var children = sem.children;
+				var children = sem.querySelectorAll('.course');
 				for (var i = 0; i < children.length; i++) {
-				var tableChild = children[i];
-				console.log(tableChild);
-				console.log(lists[int].push(tableChild.innerText))
+					lists[int].push(children[i].innerText);
 				}
-				console.log(lists)
+				refreshSemesterStatus(sem);
 				int ++;
 
 				
@@ -612,7 +765,9 @@ document.getElementById("courseSelect").innerHTML += `<option value="${courseCod
 		// Re-add drag and drop event listeners to the courses
 	})
 	.catch((error) => {
+		document.body.style.cursor = 'default';
 		console.error('Error:', error);
+		alert(`Could not generate the plan: ${error.message}`);
 	});
 }
 
@@ -627,20 +782,13 @@ document.getElementById('load').addEventListener('change', update);
 
 
 const makeChoice = function(item) {
-	console.log(item);
-	let val = [...item.options].map(o => o.value)
-	let courseCode = item.options[item.selectedIndex].text;
-	let dragg = null;
-	val.forEach(function(code) {
-	let draggable = document.getElementById(code);
-	
-	if (draggable != null) {
-		dragg = draggable;
-	
-	}});
-	
-	dragg.id = courseCode;
-	dragg.innerHTML = courseCode;
+	const courseCode = item.value;
+	const draggable = document.getElementById(courseCode);
+	if (!draggable) return;
+
+	draggable.id = courseCode;
+	draggable.innerHTML = courseCode;
+	showCourseInfo(courseCode);
 }
 
 </script>

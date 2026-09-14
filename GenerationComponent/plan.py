@@ -44,9 +44,7 @@ class Plan:
 		
 		# TODO make it so that there are spaces left for these requirements
 		"""
-		print(69, course, self._options['core'])
 		if course not in self._options["required"] and not [c for c in course if c in self._options['core']]:
-			print(69, course)
 			self._options["required"].append(course)
 
 
@@ -77,9 +75,7 @@ class Plan:
 			os = Plan.DATA[course][1]
 		try:
 			if (year < 1 or year > self._years or semester not in os): # Validation Checking
-				print(os, 6969)
-				print(f"Could not add course. Year {year}, Semester {semester} is invalid.")
-				return 1 
+				return 1
 		except:
 			print("there was a paul moment")
 		# Going through and adding course as first blank spot
@@ -100,6 +96,28 @@ class Plan:
 				if course in semester:
 					return i+1, j+1
 		return 1, 0
+
+	def _select_prerequisites(self, expression):
+		"""Resolve an AND/OR prerequisite expression for scheduling.
+
+		Lists represent AND groups and tuples represent OR choices.  The
+		first OR option is selected deterministically for the generated
+		plan, while the complete choice is retained for the UI.
+		"""
+		if isinstance(expression, str):
+			return [expression] if len(expression) == 8 else []
+
+		if isinstance(expression, tuple):
+			self.add_required_choice(expression)
+			return self._select_prerequisites(expression[0]) if expression else []
+
+		if isinstance(expression, list):
+			selected = []
+			for item in expression:
+				selected.extend(self._select_prerequisites(item))
+			return selected
+
+		return []
 
 	def add_course(self, course: str, required=False) -> bool:
 		"""Adds a course to the first availiable spot taking into account
@@ -133,55 +151,38 @@ class Plan:
 		if course in self._courses:
 			return # wtf is the point
 
-		# First recurislvey add the prerequisites and their prereqs etc
-		hy, hs = 1, 1 # highest year and semester
+		# Recursively add the prerequisites and their prerequisites.
+		hy, hs = 1, 1
 		ps = []
 		if course not in Plan.DATA:
 			o = pre_off(course)
 			if o:
 				ps, os = o
 				Plan.DATA[course] = (ps, os)
+			else:
+				os = [1, 2]
 		else:
-			ps = Plan.DATA[course]
-		for prereq in ps:
-			if isinstance(prereq, list):
-				if prereq:
-					for c in prereq:
-						self.add_course(c)
-			elif isinstance(prereq, tuple):
-				cores = [c for c in course if c in self._options['core']]
-				if cores:
-					course = cores[0]
-					for c in cores:
-						self._options['extra'].append(c)
-					
-				else:
-				# There is a choice one or the other
-					if isinstance(prereq, tuple) and len(prereq) == 2 and sum(len(x) for x in prereq) == 16:
-						self.add_required_choice(prereq)
-				# choose the first one for now # TODO
-				if prereq:
-					prereq = prereq[0]
-			elif prereq not in self._courses:
-				pass
-			# get the last semester a prerequisite is in 
-			yr, se = self.get_course_sem(prereq)
-			if hy > yr or (hy == yr and se > hs):
-				hy = yr
-				hs = se
+			ps, os = Plan.DATA[course]
 
-		# add this course finlaly
-		s = iter(semIter( hy, hs))
-		if ps:
+		selected_prerequisites = self._select_prerequisites(ps)
+		for prereq in selected_prerequisites:
+			self.add_course(prereq)
+			yr, se = self.get_course_sem(prereq)
+			if hy < yr or (hy == yr and hs < se):
+				hy, hs = yr, se
+
+		# Add this course in the first valid semester after its prerequisites.
+		s = iter(semIter(hy, hs))
+		if selected_prerequisites:
 			next(s)
 		code = self._add(course, s.year, s.sem)
-		while code == -1:
+		while code != 0:
 			if s.year > 10:
 				if course not in self._courses:
 					self._options['error'].append(course)
-				break # ERROR
+				break
 			next(s)
-			self._add(course, s.year, s.sem)
+			code = self._add(course, s.year, s.sem)
 
 
 	def get_data(self) -> dict:

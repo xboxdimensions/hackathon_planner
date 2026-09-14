@@ -1,3 +1,7 @@
+import html
+import re
+
+
 relatedCourses = {'course-incompatible">': 'Incompatible',
                   'course-companion">': "Companion",
                   'recommended-prerequisite">': "RecommendPreq"}
@@ -13,17 +17,67 @@ def name(text: str):
 
 
 def preqs(text: str):
-    rangeS = text.find('course-prerequisite">')+21
-    if rangeS == 20:
-        return set()
-    text = text[rangeS:]
-    rangeE = text.find("</p>")
-    text = text[:rangeE]
-    if "grade" in text:
-        return ""
+    """Parse a UQ prerequisite expression into AND/OR structures.
 
-    print( flatten(split(text.upper())))
-    return flatten(split(text.upper()))
+    The planner represents an AND as a list and an OR as a tuple.  UQ
+    publishes prerequisite text such as:
+    ``CSSE2002 and (MATH1061 or MATH1081)``.
+    """
+    marker = text.find('course-prerequisite">')
+    if marker < 0:
+        return []
+
+    expression = text[marker + len('course-prerequisite">'):]
+    expression = expression.split("</p>", 1)[0]
+    expression = re.sub(r"<[^>]+>", " ", expression)
+    expression = html.unescape(expression).upper()
+
+    if "GRADE" in expression:
+        return []
+
+    tokens = re.findall(r"\(|\)|\bAND\b|\bOR\b|[A-Z]{4}\d{4}", expression)
+    if not tokens:
+        return []
+
+    position = 0
+
+    def parse_factor():
+        nonlocal position
+        if position >= len(tokens):
+            return []
+        if tokens[position] == "(":
+            position += 1
+            value = parse_or()
+            if position < len(tokens) and tokens[position] == ")":
+                position += 1
+            return value
+        value = tokens[position]
+        position += 1
+        return value
+
+    def parse_and():
+        nonlocal position
+        value = parse_factor()
+        while position < len(tokens) and tokens[position] == "AND":
+            position += 1
+            right = parse_factor()
+            left_values = value if isinstance(value, list) else [value]
+            right_values = right if isinstance(right, list) else [right]
+            value = left_values + right_values
+        return value
+
+    def parse_or():
+        nonlocal position
+        value = parse_and()
+        while position < len(tokens) and tokens[position] == "OR":
+            position += 1
+            right = parse_and()
+            left_values = value if isinstance(value, tuple) else (value,)
+            right_values = right if isinstance(right, tuple) else (right,)
+            value = left_values + right_values
+        return value
+
+    return parse_or()
 
 def flatten(S):
     if not S:
